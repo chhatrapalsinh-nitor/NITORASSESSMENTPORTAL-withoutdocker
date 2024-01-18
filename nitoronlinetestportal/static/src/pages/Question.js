@@ -31,8 +31,20 @@ const Question = (props) => {
         props.setSelectedKey('questions');
     }, []);
 
+    useEffect(() => {
+        form.setFieldsValue(record)
+    }, [form, record]);
+    
+    useEffect(() => {
+        form2.setFieldsValue(questionDetail)
+    }, [form2, questionDetail]);
+
+    useEffect(() => {
+        form3.setFieldsValue(testDetails)
+    }, [form3, testDetails]);
+
     let filter_language = () => {
-        if (apiData){
+        if (apiData && apiData.data && apiData.data[0]){
             JSON.parse(apiData?.data[0].all_languages)?.map((name, index) => {
                 if (!filter_language_data.some(item => name.language === item.value)) {
                     filter_language_data.push({ value: name.language, text: name.language });
@@ -73,6 +85,11 @@ const Question = (props) => {
             )
         },
         {
+            title: 'Duration',
+            dataIndex: 'duration',
+            key: 'duration',
+        },
+        {
             title: 'Action',
             render: (_, record) => (
                 <>
@@ -80,7 +97,7 @@ const Question = (props) => {
                         <Tooltip placement="topLeft" title="Edit Test">
                             <EditFilled onClick={() => { showEditlModal(record)}}/>
                         </Tooltip>
-                        <Tooltip placement="topLeft" title="Edit Test">
+                        <Tooltip placement="topLeft" title="Delete Test">
                             <DeleteFilled onClick={() => { showDeletelModal(record)}} />
                         </Tooltip>
                     </Space>
@@ -107,9 +124,11 @@ const Question = (props) => {
             (response) => {
                 if (record.type == 1){
                     setquestionDetail(response.data); 
+                    setTestDetails(null);
                 }   
                 else{
-                    setTestDetails(response.data);      
+                    setTestDetails(response.data);
+                    setquestionDetail(null); 
                 }
             }
         ).catch(reason => message.error(reason));
@@ -162,8 +181,21 @@ const Question = (props) => {
             values["program_test_cases"]=program_test_cases
         }
         values["difficulty"] = record.difficulty;
+        const new_values = {
+            ...values, 
+            multiple_options: questionDetail ? values["multiple_options"] :  null,
+            program_test_cases : testDetails ? values["program_test_cases"] : null
+        }
+        if (questionDetail) {
+            delete new_values["program_test_cases"]
+            delete new_values["multiple_options"]["candidate_answers"]
+        }
+        if (testDetails) {
+            delete new_values["multiple_options"]
+            delete new_values["program_test_cases"]["candidate_answers"]
+        }
         triggerFetchData(
-            'add_question/',{"id": record.id, values}
+            'add_question/',{"id": record.id, values :new_values}
         ).then(
             (data) => {
                 message.success('Question Updated Successfully');
@@ -200,7 +232,7 @@ const Question = (props) => {
                 </Upload>
             </div>
             
-            <Table bordered loading={isLoading} columns={columns} dataSource={apiData ? apiData.data : []} onChange={onChange} />     
+            <Table bordered loading={isLoading} columns={columns} dataSource={apiData ? apiData.data : []} onChange={onChange} />
             {/* Delete Modal */}
             <Modal title={isModalOpen.name} open={isModalOpen} onOk={() => handleOk()} onCancel={handleCancel} okText="Yes">
             <Divider></Divider>
