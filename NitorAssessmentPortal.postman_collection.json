@@ -1,0 +1,476 @@
+{
+	"info": {
+		"_postman_id": "00070560-d592-4a6c-9754-057135443c3a",
+		"name": "NitorAssessmentPortal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5722364"
+	},
+	"item": [
+		{
+			"name": "login_home",
+			"item": [
+				{
+					"name": "login/",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let csrftokenCookie = pm.cookies.get('csrftoken');",
+									"pm.collectionVariables.set(\"csrftoken\", csrftokenCookie);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin123",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/login/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/logout/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "questions",
+			"item": [
+				{
+					"name": "add_question/ (mcq)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "RgvkQ1ci8ueZnHTfrSbXkl3MtDHkdR1eiEC18PHkMkY6WolkYmoPBeelurh4DFes",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "sessionid",
+								"value": "76bvw1mqojoftj2nyv0dyyn7k7c1w227",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Basic data type in python3.8.1?\",\n    \"type\": 1,\n    \"difficulty\": 1,\n    \"language\": \"python\",\n    \"multiple_options\": {\n        \"option1\": \"False\",\n        \"option2\": \"True\",\n        \"correct_value\": \"False\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/add_question/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"add_question",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_question/ (programs)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Basic data type in python3.8?\",\n    \"type\": 2,\n    \"difficulty\": 1,\n    \"language\": \"python\",\n    \"program_test_cases\": {\n        \"case1\": 1,\n        \"case2\": 2,\n        \"case3\": 3,\n        \"case4\": 4\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/add_question/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"add_question",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulk_questions/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mcq\": [\n        {\n            \"name\": \"mcq_2\",\n            \"type\": 1,\n            \"difficulty\": 1,\n            \"language\": \"react\",\n            \"option1\": 1,\n            \"option2\": 2,\n            \"correct_value\": 1\n        }\n    ],\n    \"programs\": [\n        {\n            \"name\": \"Q3.2\",\n            \"type\": 2,\n            \"difficulty\": 2,\n            \"language\": \"python\",\n            \"case1\": \"1\",\n            \"case2\": \"2\",\n            \"case3\": \"3\",\n            \"case4\": \"4\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/bulk_questions/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bulk_questions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "questions/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							},
+							{
+								"key": "sessionid",
+								"value": "76bvw1mqojoftj2nyv0dyyn7k7c1w227",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}/questions/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"questions",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "difficulty",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "language",
+									"value": "react",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "2",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tests_app",
+			"item": [
+				{
+					"name": "create_test/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							},
+							{
+								"key": "sessionid",
+								"value": "76bvw1mqojoftj2nyv0dyyn7k7c1w227",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Case 2_1\",\n    \"question_details\": [\n        {\n            \"language\": \"python\",\n            \"mcq_count\": 3,\n            \"easy_program_count\": 1,\n            \"medium_program_count\": 1,\n            \"hard_program_count\": 1\n        },\n        {\n            \"language\": \"javscript\",\n            \"mcq_count\": 3,\n            \"easy_program_count\": 1,\n            \"medium_program_count\": 1,\n            \"hard_program_count\": 0\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/create_test/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"create_test",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_test_list/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							},
+							{
+								"key": "sessionid",
+								"value": "76bvw1mqojoftj2nyv0dyyn7k7c1w227",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}/get_test_list/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"get_test_list",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generate_test/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							},
+							{
+								"key": "sessionid",
+								"value": "76bvw1mqojoftj2nyv0dyyn7k7c1w227",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}/generate_test/?testId=2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"generate_test",
+								""
+							],
+							"query": [
+								{
+									"key": "testId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generate_test_link/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrftoken}}",
+								"type": "text"
+							},
+							{
+								"key": "sessionid",
+								"value": "76bvw1mqojoftj2nyv0dyyn7k7c1w227",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"GraphQL with Django\",\n    \"test\": 0,\n    \"end_date\": \"2023-05-20T06:28\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/generate_test_link/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"generate_test_link",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "Hari123",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "hariom",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "csrftoken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

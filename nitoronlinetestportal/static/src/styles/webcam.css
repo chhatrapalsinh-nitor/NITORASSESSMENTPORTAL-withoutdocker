@@ -1,0 +1,10 @@
+video.panel {
+    width: 200px;
+    align-self: self-end;
+    max-height: 0;
+}
+
+.image {
+    width: 200px;
+    /* display: none; */
+}

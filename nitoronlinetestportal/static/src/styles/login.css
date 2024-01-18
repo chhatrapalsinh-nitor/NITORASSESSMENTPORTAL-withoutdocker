@@ -1,0 +1,30 @@
+.parent-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-style {
+    width: 70%;
+    height: 70%;
+    background-color: #1b1b1b;
+    box-shadow: 5px 8px 24px 5px rgba(0, 0, 0, 0.6);
+}
+
+.row-style {
+    height: 100%;
+}
+
+.col-logo {
+    margin: auto;
+    text-align: center;
+}
+
+.col-form {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

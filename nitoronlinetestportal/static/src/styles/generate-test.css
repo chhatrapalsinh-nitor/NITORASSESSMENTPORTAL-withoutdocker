@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@100;200;300;400;500;600;700;800&display=swap');
+
+
+.quiz-container {
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 30px 60px;
+}
+
+.quiz-container .active-question-no {
+  font-size: 32px;
+  font-weight: 500;
+  color: #1f3c85;
+}
+
+.quiz-container .total-question {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e0dee3;
+}
+
+.quiz-container h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.quiz-container ul {
+  margin-top: 20px;
+}
+
+.quiz-container ul li {
+  text-decoration: none;
+  list-style: none;
+  color: #2d264b;
+  font-size: 16px;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  padding: 11px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.quiz-container ul .selected-answer {
+  background: #c8cfe6;
+  border: 1px solid #1f3c85;
+}
+
+.quiz-container button {
+  background: linear-gradient(90.04deg, #1f3c85 0.03%, #8f94b5 99.96%);
+  border-radius: 9px;
+  font-size: 20px;
+  color: #ffffff;
+  padding: 10px 42px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 15px;
+  height: 45px;
+}
+
+.quiz-container button:disabled {
+  background: #e7e8e9;
+  color: #9fa3a9;
+  cursor: not-allowed;
+}
+
+.quiz-container button:hover{
+  color: #ffffff !important;
+}
+
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.quiz-container button span {
+  margin: auto;
+    line-height: 1.25rem; 
+
+    padding: 0px;
+}
+
+
+.result h3 {
+  font-size: 24px;
+  letter-spacing: 1.4px;
+  text-align: center;
+}
+
+.result p {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.result p span {
+  color: #1f3c85;
+  font-size: 22px;
+}
+
+.card-style-test{
+  width: 70%;
+  height: 70%;
+  background-color: #f0eded;
+  box-shadow: 5px 8px 24px 5px rgba(0, 0, 0, 0.6);
+}
+
+.card-h1{
+  font-size: 2.5rem;
+  margin-bottom: 1rem!important;
+}
+
+.card-p{
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.text-truncate{
+  color: #4e687e!important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-nowrap{
+  color: #4e687e!important;
+}
+.card-icon{
+  margin-right: 0.5rem!important;
+}
+
+  /* DAYS OF THE WEEK */
+div.days {
+  margin: 0 auto;
+  color: #131212;
+}
+div.days .day { display: inline-block; }
+div.days .day p {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: sans-serif;
+  text-transform: uppercase;
+}
+/* CLOCK */
+/* div.clock { margin: 0 0; } */
+div.clock div {
+  display: inline-block;
+  position: relative;
+}
+div.clock div p {
+  font-size: 30px;
+  position: relative;
+  z-index: 100;
+}
+
+div.clock .meridian { margin-left: 15px; }/*END CLOCK*/
+/* AM OR PM*/
+.am-pm {
+  font-family: sans-serif;
+  text-transform: uppercase;
+  width: 20px;
+}
+div.am-pm div p {
+  font-size: 12px;
+  font-weight: bold;
+  width: 100%;
+}
+.am, .pm { color: #131212; }
+/*CLASS THAT CHANGES COLOR OF TEXT TO APPEAR LIKE ITS "ON"*/
+.light-on { color: #ffffff; }

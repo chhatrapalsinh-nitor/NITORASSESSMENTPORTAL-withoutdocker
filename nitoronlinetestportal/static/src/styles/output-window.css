@@ -1,0 +1,18 @@
+.output-window {
+    height: 30vh;
+    background-color: #1e293b;
+    border-radius: 5px;
+    color: white;
+    padding: 1rem;
+    margin: 1rem 0 1rem 0;
+    overflow-y: auto;
+}
+
+.text-green {
+    color: #389e0d;
+    font-weight: 500;
+}
+.text-red {
+    color: #EF4444;
+    font-weight: 500;
+}
