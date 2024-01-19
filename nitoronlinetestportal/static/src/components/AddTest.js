@@ -108,7 +108,6 @@ const AddTest = ({
     }
     triggerFetchData("create_update_test/", dataList[0])
       .then((data) => {
-        console.log("RESULT", data);
         message.success("Test created");
         fetchData();
       })

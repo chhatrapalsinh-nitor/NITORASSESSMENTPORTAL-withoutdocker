@@ -39,8 +39,6 @@ const CreatedTestDetails = (props) => {
     ];
 
     const showDetailModal = (record) => {
-        console.log("SHOW DETAIL", { record })
-
         record.question_details.map(item => {
             console.log("KEY VALUES OF RECORD", Object.keys(item),
                 item.easy_program_count,

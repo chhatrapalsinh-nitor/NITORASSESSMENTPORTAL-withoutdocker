@@ -165,10 +165,6 @@ const CreateTest = (props) => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
-  console.log("testRecord:::", testRecord);
-  console.log("dataList:::", dataList);
-  console.log("rowRecord:::", rowRecord);
-
   // Function to open details Test Model
   const openDetailModal = (testRecord) => {
     setIsViewTestModalOpen(true);
@@ -197,7 +193,6 @@ const CreateTest = (props) => {
   const handleDeactivate = (testStatus) => {
     triggerFetchData(`deactivate_test/?testId=${testRecord.id}`, [], "PATCH")
       .then((data) => {
-        // console.log("RESULT",data)
         message.success(data.message);
         fetchData();
       })
