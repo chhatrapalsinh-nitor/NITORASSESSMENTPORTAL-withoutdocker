@@ -110,7 +110,7 @@ const AddTest = ({
       .then((data) => {
         console.log("RESULT", data);
         message.success("Test created");
-        props.func();
+        fetchData();
       })
       .catch((reason) => message.error(reason));
     closeAddNewTestModal();
