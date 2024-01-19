@@ -12,6 +12,12 @@ const { Panel } = Collapse;
 
 const Question = (props) => {
     let filter_language_data = []
+    let totalRecords = 0
+    
+    const [page, setPage] = useState(1)
+    const [pageSize, setPageSize] = useState(10);
+    const [lang, setLang] = useState(["python"])
+
     const [record, setRecord] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -20,11 +26,14 @@ const Question = (props) => {
     const [form3] = Form.useForm();
     const [questionDetail, setquestionDetail] = useState(null);
     const [testDetails, setTestDetails] = useState(null);
-    const [fetchUrl, setFetchUrl] = useState("questions")
+    const [fetchUrl, setFetchUrl] = useState("questions?language="+lang+"&page="+page)
 
     const { isLoading, serverError, apiData, fetchData } = useFetch(
         fetchUrl
     )
+    if (apiData && apiData.data && apiData.data.total_records) {
+        totalRecords = apiData.data.total_records
+    }
 
     // trigger on component mount
     useEffect(() => {
@@ -43,9 +52,14 @@ const Question = (props) => {
         form3.setFieldsValue(testDetails)
     }, [form3, testDetails]);
 
+    useEffect(() => {
+        setFetchUrl(`questions?language=${lang}&page=${page}&page_size=${pageSize}`)
+        fetchData();
+    }, [lang, page, pageSize]);
+
     let filter_language = () => {
-        if (apiData && apiData.data && apiData.data[0]){
-            JSON.parse(apiData?.data[0].all_languages)?.map((name, index) => {
+        if (apiData && apiData.data && apiData.data.questions_data && apiData.data.questions_data[0]){
+            JSON.parse(apiData?.data.questions_data[0].all_languages)?.map((name, index) => {
                 if (!filter_language_data.some(item => name.language === item.value)) {
                     filter_language_data.push({ value: name.language, text: name.language });
                 }
@@ -156,12 +170,9 @@ const Question = (props) => {
     };
     
     const onChange = (pagination, filters, sorter, extra) => {
-        let lang = ["python"]
         if (filters.language){
-            lang = filters.language
+            setLang(filters.language)
         }
-        setFetchUrl("questions?language="+lang);
-        fetchData();
     };
 
     const downloadExcelTemplate = () => {
@@ -232,7 +243,10 @@ const Question = (props) => {
                 </Upload>
             </div>
             
-            <Table bordered loading={isLoading} columns={columns} dataSource={apiData ? apiData.data : []} onChange={onChange} />
+            <Table bordered loading={isLoading} columns={columns} dataSource={apiData ? apiData.data.questions_data : []} onChange={onChange} pagination={{ defaultPageSize: pageSize, total:totalRecords, showSizeChanger: true, pageSizeOptions: ['10', '20', '30'],  onChange: (page, pageSize) => {
+                setPage(page)
+                setPageSize(pageSize)
+            }}} />
             {/* Delete Modal */}
             <Modal title={isModalOpen.name} open={isModalOpen} onOk={() => handleOk()} onCancel={handleCancel} okText="Yes">
             <Divider></Divider>
@@ -380,12 +394,10 @@ const Question = (props) => {
                         </Form>
                         </Panel>
                         </Collapse>
-                    }               
-                    
+                    }
                     
                 </Form>
                </Modal>
-           
         </Layout.Content>
         </>
     )
