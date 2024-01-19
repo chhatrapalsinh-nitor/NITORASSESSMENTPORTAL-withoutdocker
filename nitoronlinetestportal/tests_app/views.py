@@ -239,7 +239,10 @@ def deactivate_test(request):
         # deactiavte test
         test_details.is_active = not test_details.is_active
         test_details.save()
-        return standard_json_response(message='Test Deactivated')
+        if test_details.is_active:
+            return standard_json_response(message='Test Activated')
+        else: 
+            return standard_json_response(message='Test Deactivated')
     
     except TestsDetails.DoesNotExist as e:
         return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
