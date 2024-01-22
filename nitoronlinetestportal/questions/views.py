@@ -18,10 +18,9 @@ def get_question_list(request):
     """
         Returns list of questions
     """
-    filter_params = {
-        'language': request.query_params["language"] if "language" in request.query_params else "python"
-    }
-    allowed_keys = ['id', 'language', 'type', 'difficulty']
+    language_filter = request.query_params["language"] if "language" in request.query_params else "python"
+    filter_params = {}
+    allowed_keys = ['id', 'type', 'difficulty']
     for key, value in request.query_params.items():
         if key in allowed_keys:
             filter_params[key] = value
@@ -30,6 +29,9 @@ def get_question_list(request):
     page_size = request.query_params.get('page_size', 10)
 
     questions = Question.objects.filter(**filter_params)
+    if language_filter :
+        questions = questions.filter(language__in=language_filter.split(","))
+    
     paginator = Paginator(questions, page_size)
     try:
         paginated_data = paginator.page(page)
@@ -37,8 +39,12 @@ def get_question_list(request):
         # if we exceed the page limit we return the last page 
         paginated_data = paginator.page(paginator.num_pages)
     questions_data = QuestionSerializer(paginated_data, many=True).data
+    response_data = {
+        "questions_data" : questions_data,
+        "total_records" : len(questions)
+    }
 
-    return standard_json_response(data=questions_data)
+    return standard_json_response(data=response_data)
 
 
 @api_view(('POST',))
