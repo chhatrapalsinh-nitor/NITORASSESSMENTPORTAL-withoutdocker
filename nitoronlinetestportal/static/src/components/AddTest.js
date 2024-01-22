@@ -129,7 +129,6 @@ const AddTest = ({
       question_details: [values],
     };
 
-
     if (dataList.length == 0) {
       setDataList((oldArray) => [...oldArray, form_data]);
       setComponentDisabled(false);
@@ -161,6 +160,7 @@ const AddTest = ({
       dList = item;
     });
     setDataList([dList]);
+    createTest();
   };
 
   // Function to Calculate Weightage
@@ -305,6 +305,7 @@ const AddTest = ({
           onCancel={closeAddNewTestModal}
           width={900}
           okText="Submit"
+          footer={null}
         >
           <>
             {testRecord?.question_details?.map((rec, index) => (
@@ -386,6 +387,30 @@ const AddTest = ({
                     </Panel>
                   </Collapse>
                 </Col>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "end",
+                    marginTop: "12px",
+                  }}
+                >
+                  <Button
+                    className="ant-btn ant-btn-default"
+                    onClick={closeAddNewTestModal}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "8px" }}
+                    type="primary"
+                    className="ant-btn ant-btn-primary"
+                    onClick={form.submit}
+                  >
+                    Update
+                  </Button>
+                </div>
               </Form>
             ))}
             <br></br>
