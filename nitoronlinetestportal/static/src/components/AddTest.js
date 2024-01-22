@@ -169,7 +169,9 @@ const AddTest = ({
       easy_program_count: 5,
       medium_program_count: 10,
       hard_program_count: 15,
-      mcq_count: 5,
+      easy_mcq_count: 5,
+      medium_mcq_count: 5,
+      hard_mcq_count: 5,
     };
 
     let score = 0;
