@@ -213,8 +213,8 @@ def generate_test(request):
                 generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.EASY, limit=easy_program_count))
                 generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.MEDIUM, limit=medium_program_count))
                 generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count))
-            except e:
-                return standard_json_response(message='testId must be positive integer.', status_code=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return standard_json_response(message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
 
     json_question_data = json.loads(json.dumps(generated_questions))
 
@@ -292,6 +292,30 @@ def deactivate_test(request):
 @api_view(('POST',))
 @permission_classes((IsAuthenticated, ))
 def generate_test_link(request):
+    try:
+        test_exists = TestsDetails.objects.filter(id=request.data['test']).last()
+        tds = TestDetailSerializer(instance=test_exists)
+        question_details = tds.data['question_details']
+    
+        for details in question_details:
+            
+            language = details['language']
+            easy_mcq_count = details['easy_mcq_count']
+            medium_mcq_count = details['medium_mcq_count']
+            hard_mcq_count = details['hard_mcq_count']
+            easy_program_count = details['easy_program_count']
+            hard_program_count = details['hard_program_count']
+            medium_program_count = details['medium_program_count']
+            
+            get_random_mcq_answers(language=language, difficulty=Question.EASY, limit=easy_mcq_count)
+            get_random_mcq_answers(language=language, difficulty=Question.MEDIUM, limit=medium_mcq_count)
+            get_random_mcq_answers(language=language, difficulty=Question.HARD, limit=hard_mcq_count)
+            get_random_program_testcases(language=language, difficulty=Question.EASY, limit=easy_program_count)
+            get_random_program_testcases(language=language, difficulty=Question.MEDIUM, limit=medium_program_count)
+            get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count)
+    except Exception as e:
+        return standard_json_response(message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
+
     tas = TestAllocationsSerialiazer(data=request.data)
 
     if not tas.is_valid():
