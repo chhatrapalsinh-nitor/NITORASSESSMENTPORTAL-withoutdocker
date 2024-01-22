@@ -118,7 +118,22 @@ def create_update_test(request):
             if question_type not in valid_question_types:
                 continue
             tds.validated_data['total_questions'] += question_count
-
+        language = details['language']
+        easy_mcq_count = details['easy_mcq_count']
+        medium_mcq_count = details['medium_mcq_count']
+        hard_mcq_count = details['hard_mcq_count']
+        easy_program_count = details['easy_program_count']
+        hard_program_count = details['hard_program_count']
+        medium_program_count = details['medium_program_count']
+        try:
+            get_random_mcq_answers(language=language, difficulty=Question.EASY, limit=easy_mcq_count)
+            get_random_mcq_answers(language=language, difficulty=Question.MEDIUM, limit=medium_mcq_count)
+            get_random_mcq_answers(language=language, difficulty=Question.HARD, limit=hard_mcq_count)
+            get_random_program_testcases(language=language, difficulty=Question.EASY, limit=easy_program_count)
+            get_random_program_testcases(language=language, difficulty=Question.MEDIUM, limit=medium_program_count)
+            get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count)
+        except Exception as e:
+            return standard_json_response(message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
     tds.validated_data['is_active'] = True
 
     tds.save()
@@ -191,12 +206,15 @@ def generate_test(request):
             generated_questions["duration"] = total_duration
             generated_questions["weightage"] = tds.data['weightage']
             generated_questions[language] = []
-            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.EASY, limit=easy_mcq_count))
-            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.MEDIUM, limit=medium_mcq_count))
-            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.HARD, limit=hard_mcq_count))
-            generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.EASY, limit=easy_program_count))
-            generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.MEDIUM, limit=medium_program_count))
-            generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count))
+            try:
+                generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.EASY, limit=easy_mcq_count))
+                generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.MEDIUM, limit=medium_mcq_count))
+                generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.HARD, limit=hard_mcq_count))
+                generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.EASY, limit=easy_program_count))
+                generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.MEDIUM, limit=medium_program_count))
+                generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count))
+            except e:
+                return standard_json_response(message='testId must be positive integer.', status_code=status.HTTP_400_BAD_REQUEST)
 
     json_question_data = json.loads(json.dumps(generated_questions))
 
@@ -210,9 +228,13 @@ def get_random_mcq_answers(language, difficulty, limit):
     all_questions = list(Question.objects.filter(type=Question.MULTIPLE_CHOICES, difficulty=difficulty, language__icontains=language).values_list('id', flat=True))
 
     if limit > len(all_questions):
-        limit = len(all_questions)
-    else :
-        print(f"There are not enough {difficulty} question.")
+        if difficulty == Question.EASY :
+            difficulty_level = "Easy"
+        elif difficulty == Question.MEDIUM :
+            difficulty_level = "Medium"
+        elif difficulty == Question.HARD :
+            difficulty_level = "Hard"
+        raise Exception(f"There are not enough {difficulty_level} MCQ question, As, we have only {len(all_questions)} Existing {difficulty_level} Programs")
 
     limited_random_questions = random.sample(all_questions, limit)
     question_answers = MultipleChoicesAnswerSerializer(MultipleChoicesAnswer.objects.filter(question__in=limited_random_questions), many=True)
@@ -230,7 +252,13 @@ def get_random_program_testcases(language, difficulty, limit):
     all_questions = list(Question.objects.filter(type=Question.PROGRAMS, difficulty=difficulty, language__icontains=language).values_list('id', flat=True))
 
     if limit > len(all_questions):
-        limit = len(all_questions)
+        if difficulty == Question.EASY :
+            difficulty_level = "Easy"
+        elif difficulty == Question.MEDIUM :
+            difficulty_level = "Medium"
+        elif difficulty == Question.HARD :
+            difficulty_level = "Hard"
+        raise Exception(f"There are not enough {difficulty_level} Programs. As, we have only {len(all_questions)} Existing {difficulty_level} Programs")
 
     limited_random_questions = random.sample(all_questions, limit)
     question_answers = ProgramTestCaseSerializer(ProgramTestCase.objects.filter(question__in=limited_random_questions), many=True)
