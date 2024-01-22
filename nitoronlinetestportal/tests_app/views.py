@@ -7,26 +7,32 @@
       "question_details": [
           {
             "python": {
-              "mcq_count": 5,
-              "easy_program_count": 1,
-              "medium_program_count": 2,
-              "hard_program_count": 3
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
+                "easy_program_count": 1,
+                "medium_program_count": 2,
+                "hard_program_count": 3
             }
           },
           {
             "javascript": {
-              "mcq_count": 5,
-              "easy_program_count": 1,
-              "medium_program_count": 2,
-              "hard_program_count": 1
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
+                "easy_program_count": 1,
+                "medium_program_count": 2,
+                "hard_program_count": 1
             }
           },
           {
             "graphql": {
-              "mcq_count": 5,
-              "easy_program_count": 0,
-              "medium_program_count": 0,
-              "hard_program_count": 0
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
+                "easy_program_count": 0,
+                "medium_program_count": 0,
+                "hard_program_count": 0
             }
           }
       ]
@@ -64,21 +70,27 @@ def create_update_test(request):
         "question_details": [
             {
                 "language": "python",
-                "mcq_count": 5,
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
                 "easy_program_count": 1,
                 "medium_program_count": 2,
                 "hard_program_count": 3
             },
             {
                 "language": "javascript",
-                "mcq_count": 5,
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
                 "easy_program_count": 1,
                 "medium_program_count": 2,
                 "hard_program_count": 1
             },
             {
                 "language": "graphql",
-                "mcq_count": 5,
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
                 "easy_program_count": 0,
                 "medium_program_count": 0,
                 "hard_program_count": 0
@@ -99,7 +111,7 @@ def create_update_test(request):
     if not tds.is_valid():
         return standard_json_response(message=tds.errors, status_code=status.HTTP_400_BAD_REQUEST)
 
-    valid_question_types = ['mcq_count', 'easy_program_count', 'medium_program_count', 'hard_program_count']
+    valid_question_types = ["easy_mcq_count", "medium_mcq_count", "hard_mcq_count", 'easy_program_count', 'medium_program_count', 'hard_program_count']
     tds.validated_data['total_questions'] = 0
     for details in tds.validated_data['question_details']:
         for question_type, question_count in details.items():
@@ -169,8 +181,9 @@ def generate_test(request):
             h, m, s = tds.data["duration"].split(':')
             total_duration = int(h) * 3600 + int(m) * 60 + int(s)
             language = details['language']
-            mcq_count = details['mcq_count']
-            mcq_difficulty = details['mcq_difficulty']
+            easy_mcq_count = details['easy_mcq_count']
+            medium_mcq_count = details['medium_mcq_count']
+            hard_mcq_count = details['hard_mcq_count']
             easy_program_count = details['easy_program_count']
             hard_program_count = details['hard_program_count']
             medium_program_count = details['medium_program_count']
@@ -178,7 +191,9 @@ def generate_test(request):
             generated_questions["duration"] = total_duration
             generated_questions["weightage"] = tds.data['weightage']
             generated_questions[language] = []
-            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=mcq_difficulty, limit=mcq_count))
+            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.EASY, limit=easy_mcq_count))
+            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.MEDIUM, limit=medium_mcq_count))
+            generated_questions[language].extend(get_random_mcq_answers(language=language, difficulty=Question.HARD, limit=hard_mcq_count))
             generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.EASY, limit=easy_program_count))
             generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.MEDIUM, limit=medium_program_count))
             generated_questions[language].extend(get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count))
@@ -196,6 +211,8 @@ def get_random_mcq_answers(language, difficulty, limit):
 
     if limit > len(all_questions):
         limit = len(all_questions)
+    else :
+        print(f"There are not enough {difficulty} question.")
 
     limited_random_questions = random.sample(all_questions, limit)
     question_answers = MultipleChoicesAnswerSerializer(MultipleChoicesAnswer.objects.filter(question__in=limited_random_questions), many=True)

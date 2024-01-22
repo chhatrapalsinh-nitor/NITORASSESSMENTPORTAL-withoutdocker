@@ -26,15 +26,15 @@ class TestDetailSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('A valid positive integer is required.')
 
     def validate_question_details(self, question_details):
-        valid_question_types = ['mcq_count', 'easy_program_count', 'medium_program_count', 'hard_program_count']
+        valid_question_types = ["easy_mcq_count", "medium_mcq_count", "hard_mcq_count", 'easy_program_count', 'medium_program_count', 'hard_program_count']
         required_keys = ['language'] + valid_question_types
 
         if not question_details or not isinstance(question_details, list):
-            raise serializers.ValidationError("A non-empty list of objects is required. E.g. [{'language': 'python', 'mcq_count': '3', 'easy_program_count': '1', 'medium_program_count': '1', 'hard_program_count': '1'}]")
+            raise serializers.ValidationError("A non-empty list of objects is required. E.g. [{'language': 'python', 'easy_mcq_count': '2', 'medium_mcq_count': '2', 'hard_mcq_count': '2', 'easy_program_count': '1', 'medium_program_count': '1', 'hard_program_count': '1'}]")
 
         for details in question_details:
             if not isinstance(details, dict):
-                raise serializers.ValidationError("A non-empty object value is required. E.g. {'language': 'python', 'mcq_count': '3', 'easy_program_count': '1', 'medium_program_count': '1', 'hard_program_count': '1'}")
+                raise serializers.ValidationError("A non-empty object value is required. E.g. {'language': 'python', 'easy_mcq_count': '2', 'medium_mcq_count': '2', 'hard_mcq_count': '2', 'easy_program_count': '1', 'medium_program_count': '1', 'hard_program_count': '1'}")
             if not all(key in details for key in required_keys):
                 raise serializers.ValidationError(', '.join(required_keys) + ' are required keys for object value.')
             try:
