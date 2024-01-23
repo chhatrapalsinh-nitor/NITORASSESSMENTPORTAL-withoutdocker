@@ -285,7 +285,14 @@ const AddTest = ({
                       ) : item.dataIndex == "name" ? (
                         <Input disabled={!componentDisabled} />
                       ) : (
-                        <Input />
+                        <Input
+                          type="text"
+                          onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                              event.preventDefault();
+                            }
+                          }}
+                        />
                       )}
                     </Form.Item>
                     <br></br>
@@ -395,7 +402,15 @@ const AddTest = ({
                                       disabled={true}
                                     />
                                   ) : (
-                                    <Input defaultValue={rec[item.dataIndex]} />
+                                    <Input
+                                      defaultValue={rec[item.dataIndex]}
+                                      type="text"
+                                      onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                          event.preventDefault();
+                                        }
+                                      }}
+                                    />
                                   )}
                                 </Space.Compact>
                               </Form.Item>
