@@ -1,5 +1,6 @@
 # ignore .venv files
 .venv/
+venv/
 
 # ignore local db changes
 db.sqlite3
