@@ -236,6 +236,7 @@ def get_random_mcq_answers(language, difficulty, limit):
             difficulty_level = "Hard"
         raise Exception(f"There are not enough {difficulty_level} MCQ question, As, we have only {len(all_questions)} Existing {difficulty_level} Programs")
 
+
     limited_random_questions = random.sample(all_questions, limit)
     question_answers = MultipleChoicesAnswerSerializer(MultipleChoicesAnswer.objects.filter(question__in=limited_random_questions), many=True)
 
@@ -284,7 +285,10 @@ def deactivate_test(request):
         # deactiavte test
         test_details.is_active = not test_details.is_active
         test_details.save()
-        return standard_json_response(message='Test Deactivated')
+        if test_details.is_active:
+            return standard_json_response(message='Test Activated')
+        else: 
+            return standard_json_response(message='Test Deactivated')
     
     except TestsDetails.DoesNotExist as e:
         return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
