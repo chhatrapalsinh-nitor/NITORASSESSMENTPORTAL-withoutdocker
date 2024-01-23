@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Input,
-  Layout,
   Button,
   message,
   Divider,
@@ -11,18 +10,13 @@ import {
   Form,
   Space,
   Tooltip,
-  Tag,
   Select,
   Row,
   Col,
-  List,
-  Typography,
-  Skeleton,
 } from "antd";
 import { CreateTestForm, languageOptions } from "../Utils/constants";
-import { EditFilled, CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import { triggerFetchData } from "../Utils/Hooks/useFetchAPI";
-import { useFetch } from "../Utils/Hooks/useFetchAPI";
 const { Panel } = Collapse;
 
 const AddTest = ({
