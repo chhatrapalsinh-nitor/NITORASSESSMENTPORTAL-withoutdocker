@@ -40,6 +40,18 @@ const AddTest = ({
   const [showNotEnoughQuesErrorMessage, setShowNotEnoughQuesErrorMessage] =
     useState("");
 
+  const [dynamicScore, setDynamicScore] = useState(0);
+
+  let tempQuestions = {
+    easy_mcq_count: 0,
+    easy_program_count: 0,
+    hard_mcq_count: 0,
+    hard_program_count: 0,
+    mcq_difficulty: 0,
+    medium_mcq_count: 0,
+    medium_program_count: 0,
+  };
+
   // Table in Add New Test Modal
   const columns = [
     {
@@ -222,6 +234,12 @@ const AddTest = ({
     setActiveTab(key);
   };
 
+  const handleCountInputChange = (index, value) => {
+    tempQuestions[index] = value;
+    const score = calculateWeightage(tempQuestions);
+    setDynamicScore(isNaN(score) ? 0 : score);
+  };
+
   return (
     <>
       {!isEditTestModalOpen ? (
@@ -292,6 +310,12 @@ const AddTest = ({
                               event.preventDefault();
                             }
                           }}
+                          onChange={(e) =>
+                            handleCountInputChange(
+                              item.dataIndex,
+                              e.target.value
+                            )
+                          }
                         />
                       )}
                     </Form.Item>
@@ -299,9 +323,20 @@ const AddTest = ({
                   </Col>
                 </>
               ))}
-              <Button type="primary" ghost onClick={form.submit}>
-                Add To List
-              </Button>
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Button type="primary" ghost onClick={form.submit}>
+                  Add To List
+                </Button>
+                <p>Score Weightage: {dynamicScore}</p>
+              </div>
+
               <Divider></Divider>
             </Form>
             <Table
