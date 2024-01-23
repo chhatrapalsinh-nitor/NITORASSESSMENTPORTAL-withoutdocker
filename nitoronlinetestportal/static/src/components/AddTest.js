@@ -102,6 +102,7 @@ const AddTest = ({
     console.log("params", pagination, filters, sorter, extra);
   };
 
+  // Function to add new test
   const createTest = () => {
     if (testRecord) {
       dataList[0]["id"] = testRecord.id;
@@ -116,7 +117,7 @@ const AddTest = ({
     form.resetFields();
   };
 
-  // Function to add new test
+  // Function to add form data to List with Score Weightage
   const handleCreateNewTest = (values) => {
     let name = values["name"];
     delete values["name"];
@@ -135,7 +136,7 @@ const AddTest = ({
       let filterArray = dataList.filter((item) => item.name == name);
       filterArray.map((item) => {
         form_data.question_details = [item.question_details[0], values];
-        setDataList([form_data]);
+        setDataList((oldArray) => [...oldArray, form_data]);
       });
     }
     setShowEditSection(false);
@@ -159,6 +160,7 @@ const AddTest = ({
       dList = item;
     });
     setDataList([dList]);
+    createTest();
   };
 
   // Function to Calculate Weightage
@@ -167,7 +169,9 @@ const AddTest = ({
       easy_program_count: 5,
       medium_program_count: 10,
       hard_program_count: 15,
-      mcq_count: 5,
+      easy_mcq_count: 5,
+      medium_mcq_count: 5,
+      hard_mcq_count: 5,
     };
 
     let score = 0;
@@ -285,12 +289,12 @@ const AddTest = ({
                 Add To List
               </Button>
               <Divider></Divider>
-              <Table
-                columns={columns}
-                dataSource={dataList ? dataList : question_details}
-                onChange={onChange}
-              />
             </Form>
+            <Table
+              columns={columns}
+              dataSource={dataList ? dataList : question_details}
+              onChange={onChange}
+            />
           </Row>
         </Modal>
       ) : (
@@ -301,6 +305,7 @@ const AddTest = ({
           onCancel={closeAddNewTestModal}
           width={900}
           okText="Submit"
+          footer={null}
         >
           <>
             {testRecord?.question_details?.map((rec, index) => (
@@ -382,6 +387,30 @@ const AddTest = ({
                     </Panel>
                   </Collapse>
                 </Col>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "end",
+                    marginTop: "12px",
+                  }}
+                >
+                  <Button
+                    className="ant-btn ant-btn-default"
+                    onClick={closeAddNewTestModal}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "8px" }}
+                    type="primary"
+                    className="ant-btn ant-btn-primary"
+                    onClick={form.submit}
+                  >
+                    Update
+                  </Button>
+                </div>
               </Form>
             ))}
             <br></br>
