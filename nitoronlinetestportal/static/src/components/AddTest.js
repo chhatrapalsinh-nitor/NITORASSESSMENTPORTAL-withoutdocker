@@ -36,6 +36,9 @@ const AddTest = ({
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showEditSection, setShowEditSection] = useState(false);
   const [showAddTestError, setShowAddTestError] = useState(false);
+  const [showNotEnoughQuesError, setShowNotEnoughQuesError] = useState(false);
+  const [showNotEnoughQuesErrorMessage, setShowNotEnoughQuesErrorMessage] =
+    useState("");
 
   // Table in Add New Test Modal
   const columns = [
@@ -307,8 +310,9 @@ const AddTest = ({
                 justifyContent: "center",
               }}
             >
-              {showAddTestError && (
-                <p style={{ color: "red" }}>Please add at least one Test!</p>
+              {showAddTestError && <p>Please add at least one Test!</p>}
+              {showNotEnoughQuesError && (
+                <p style={{ color: "red" }}>{showNotEnoughQuesErrorMessage}</p>
               )}
             </div>
           </Row>

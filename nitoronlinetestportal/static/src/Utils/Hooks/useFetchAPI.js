@@ -53,6 +53,8 @@ const triggerFetchData = async (url, body, method = "POST") => {
         return data;
     } catch (error) {
         console.log(error);
+        error = error?.response?.data;
+        throw error;
     }
 };
 
