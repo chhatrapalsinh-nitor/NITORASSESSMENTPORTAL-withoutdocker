@@ -41,6 +41,7 @@ const AddTest = ({
   const [activeTab, setActiveTab] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showEditSection, setShowEditSection] = useState(false);
+  const [showAddTestError, setShowAddTestError] = useState(false);
 
   // Table in Add New Test Modal
   const columns = [
@@ -107,6 +108,12 @@ const AddTest = ({
     if (testRecord) {
       dataList[0]["id"] = testRecord.id;
     }
+
+    if (dataList.length === 0) {
+      setShowAddTestError(true);
+      return;
+    }
+
     triggerFetchData("create_update_test/", dataList[0])
       .then((data) => {
         message.success("Test created");
@@ -132,13 +139,16 @@ const AddTest = ({
     if (dataList.length == 0) {
       setDataList((oldArray) => [...oldArray, form_data]);
       setComponentDisabled(false);
+      setShowAddTestError(false);
     } else {
       let filterArray = dataList.filter((item) => item.name == name);
       filterArray.map((item) => {
         form_data.question_details = [item.question_details[0], values];
         setDataList((oldArray) => [...oldArray, form_data]);
       });
+      setShowAddTestError(false);
     }
+
     setShowEditSection(false);
   };
 
@@ -295,6 +305,18 @@ const AddTest = ({
               dataSource={dataList ? dataList : question_details}
               onChange={onChange}
             />
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {showAddTestError && (
+                <p style={{ color: "red" }}>Please add at least one Test!</p>
+              )}
+            </div>
           </Row>
         </Modal>
       ) : (
