@@ -234,7 +234,7 @@ def get_random_mcq_answers(language, difficulty, limit):
             difficulty_level = "Medium"
         elif difficulty == Question.HARD :
             difficulty_level = "Hard"
-        raise Exception(f"There are not enough {difficulty_level} MCQ question, As, we have only {len(all_questions)} Existing {difficulty_level} Programs")
+        raise Exception(f"There are not enough {difficulty_level} MCQ question, As, we have only {len(all_questions)} Existing {difficulty_level} MCQs")
 
 
     limited_random_questions = random.sample(all_questions, limit)
