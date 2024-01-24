@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import {
   Input,
   Layout,
@@ -18,12 +18,12 @@ import {
   List,
   Typography,
   Skeleton,
-} from "antd";
-import { CreateTestForm, languageOptions } from "../Utils/constants";
-import { EditFilled, CloseOutlined } from "@ant-design/icons";
-import { triggerFetchData } from "../Utils/Hooks/useFetchAPI";
-import { useFetch } from "../Utils/Hooks/useFetchAPI";
-const { Panel } = Collapse;
+} from 'antd'
+import { CreateTestForm, languageOptions } from '../Utils/constants'
+import { EditFilled, CloseOutlined } from '@ant-design/icons'
+import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
+import { useFetch } from '../Utils/Hooks/useFetchAPI'
+const { Panel } = Collapse
 
 const AddTest = ({
   isAddTestModalOpen,
@@ -35,26 +35,26 @@ const AddTest = ({
   dataList,
   setDataList,
 }) => {
-  const [form] = Form.useForm();
-  const [componentDisabled, setComponentDisabled] = useState(true);
-  const [difficultyLevel, setDifficultyLevel] = useState("1");
-  const [activeTab, setActiveTab] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
-  const [showEditSection, setShowEditSection] = useState(false);
+  const [form] = Form.useForm()
+  const [componentDisabled, setComponentDisabled] = useState(true)
+  const [difficultyLevel, setDifficultyLevel] = useState('1')
+  const [activeTab, setActiveTab] = useState('')
+  const [selectedLanguage, setSelectedLanguage] = useState('')
+  const [showEditSection, setShowEditSection] = useState(false)
 
   // Table in Add New Test Modal
   const columns = [
     {
-      title: "Test Name",
-      dataIndex: "name",
-      key: "name",
-      width: "400px",
+      title: 'Test Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: '400px',
       // colSpan: 16,
       render: (text, testRecord) => (
         <>
           <a
             onClick={() => {
-              openDetailModal(testRecord);
+              openDetailModal(testRecord)
             }}
           >
             {text}
@@ -63,16 +63,16 @@ const AddTest = ({
       ),
     },
     {
-      title: "Score Weightage",
-      dataIndex: "weightage",
-      key: "weightage",
-      width: "400px",
+      title: 'Score Weightage',
+      dataIndex: 'weightage',
+      key: 'weightage',
+      width: '400px',
       // colSpan: 16,
       render: (text, testRecord) => (
         <>
           <a
             onClick={() => {
-              openDetailModal(testRecord);
+              openDetailModal(testRecord)
             }}
           >
             {text}
@@ -81,14 +81,14 @@ const AddTest = ({
       ),
     },
     {
-      title: "Action",
+      title: 'Action',
       render: (_, testRecord) => (
         <>
           <Space>
             <Tooltip placement="topLeft" title="Remove From List">
               <CloseOutlined
                 onClick={() => {
-                  removeDataList(testRecord);
+                  removeDataList(testRecord)
                 }}
               />
             </Tooltip>
@@ -96,72 +96,72 @@ const AddTest = ({
         </>
       ),
     },
-  ];
+  ]
 
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
-  };
+    console.log('params', pagination, filters, sorter, extra)
+  }
 
   // Function to add new test
   const createTest = () => {
     if (testRecord) {
-      dataList[0]["id"] = testRecord.id;
+      dataList[0]['id'] = testRecord.id
     }
-    triggerFetchData("create_update_test/", dataList[0])
+    triggerFetchData('create_update_test/', dataList[0])
       .then((data) => {
-        message.success("Test created");
-        fetchData();
+        message.success('Test created')
+        fetchData()
       })
-      .catch((reason) => message.error(reason));
-    closeAddNewTestModal();
-    form.resetFields();
-  };
+      .catch((reason) => message.error(reason))
+    closeAddNewTestModal()
+    form.resetFields()
+  }
 
   // Function to add form data to List with Score Weightage
   const handleCreateNewTest = (values) => {
-    let name = values["name"];
-    delete values["name"];
-    values["mcq_difficulty"] = difficultyLevel;
-    let weightage = calculateWeightage(values);
+    let name = values['name']
+    delete values['name']
+    values['mcq_difficulty'] = difficultyLevel
+    let weightage = calculateWeightage(values)
     let form_data = {
       name: name,
       weightage: weightage,
       question_details: [values],
-    };
+    }
 
     if (dataList.length == 0) {
-      setDataList((oldArray) => [...oldArray, form_data]);
-      setComponentDisabled(false);
+      setDataList((oldArray) => [...oldArray, form_data])
+      setComponentDisabled(false)
     } else {
-      let filterArray = dataList.filter((item) => item.name == name);
+      let filterArray = dataList.filter((item) => item.name == name)
       filterArray.map((item) => {
-        form_data.question_details = [item.question_details[0], values];
-        setDataList((oldArray) => [...oldArray, form_data]);
-      });
+        form_data.question_details = [item.question_details[0], values]
+        setDataList((oldArray) => [...oldArray, form_data])
+      })
     }
-    setShowEditSection(false);
-  };
+    setShowEditSection(false)
+  }
 
   // Function to edit existing test
   const handleEditTest = (values) => {
-    delete values["name"];
-    values["language"] = selectedLanguage ? selectedLanguage : activeTab;
-    values["mcq_difficulty"] = difficultyLevel;
-    let dList = {};
-    let weightage = calculateWeightage(values);
+    delete values['name']
+    values['language'] = selectedLanguage ? selectedLanguage : activeTab
+    values['mcq_difficulty'] = difficultyLevel
+    let dList = {}
+    let weightage = calculateWeightage(values)
 
     dataList.map((item) => {
       let index = item.question_details.findIndex(
-        (obj) => obj.language === activeTab
-      );
-      item.question_details[index] = values;
-      item.weightage = weightage;
-      setSelectedLanguage("");
-      dList = item;
-    });
-    setDataList([dList]);
-    createTest();
-  };
+        (obj) => obj.language === activeTab,
+      )
+      item.question_details[index] = values
+      item.weightage = weightage
+      setSelectedLanguage('')
+      dList = item
+    })
+    setDataList([dList])
+    createTest()
+  }
 
   // Function to Calculate Weightage
   const calculateWeightage = (question) => {
@@ -172,48 +172,45 @@ const AddTest = ({
       easy_mcq_count: 5,
       medium_mcq_count: 5,
       hard_mcq_count: 5,
-    };
+    }
 
-    let score = 0;
+    let score = 0
 
     for (const key in weights) {
-      const count = parseInt(question[key]);
+      const count = parseInt(question[key])
       if (count !== 0) {
-        score += weights[key] * count;
+        score += weights[key] * count
       }
     }
-    return score;
-  };
+    return score
+  }
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+    console.log('Failed:', errorInfo)
+  }
 
   const selectAfter = (rec) => {
     return (
-      <Select
-        defaultValue={rec ? rec.mcq_difficulty : "1"}
-        onChange={handleChange}
-      >
+      <Select defaultValue={rec ? rec.mcq_difficulty : '1'} onChange={handleChange}>
         <Option value="1">Easy</Option>
         <Option value="2">Medium</Option>
         <Option value="3">Hard</Option>
       </Select>
-    );
-  };
+    )
+  }
 
   const handleChange = (value) => {
-    isNaN(value) ? setSelectedLanguage(value) : setDifficultyLevel(value);
-  };
+    isNaN(value) ? setSelectedLanguage(value) : setDifficultyLevel(value)
+  }
 
   const removeDataList = (testRecord) => {
-    let filterArray = dataList.filter((item) => item.name !== testRecord.name);
-    setDataList(filterArray);
-  };
+    let filterArray = dataList.filter((item) => item.name !== testRecord.name)
+    setDataList(filterArray)
+  }
 
   const onCollapseChange = (key) => {
-    setActiveTab(key);
-  };
+    setActiveTab(key)
+  }
 
   return (
     <>
@@ -237,7 +234,7 @@ const AddTest = ({
                 span: 16,
               }}
               style={{
-                maxWidth: "none",
+                maxWidth: 'none',
               }}
               layout="inline"
               initialValues={testRecord}
@@ -259,7 +256,7 @@ const AddTest = ({
                         },
                       ]}
                     >
-                      {item.dataIndex == "language" ? (
+                      {item.dataIndex == 'language' ? (
                         <Select
                           showSearch
                           placeholder="Select a person"
@@ -267,15 +264,15 @@ const AddTest = ({
                           // onChange={onChange}
                           // onSearch={onSearch}
                           filterOption={(input, option) =>
-                            (option?.label ?? "")
+                            (option?.label ?? '')
                               .toLowerCase()
                               .includes(input.toLowerCase())
                           }
                           options={languageOptions}
                         />
-                      ) : item.dataIndex == "mcq_count" ? (
+                      ) : item.dataIndex == 'mcq_count' ? (
                         <Input addonAfter={selectAfter()} />
-                      ) : item.dataIndex == "name" ? (
+                      ) : item.dataIndex == 'name' ? (
                         <Input disabled={!componentDisabled} />
                       ) : (
                         <Input />
@@ -319,7 +316,7 @@ const AddTest = ({
                   span: 16,
                 }}
                 style={{
-                  maxWidth: "none",
+                  maxWidth: 'none',
                 }}
                 layout="inline"
                 initialValues={{ name: testRecord.name, ...rec }}
@@ -350,26 +347,26 @@ const AddTest = ({
                                 ]}
                               >
                                 <Space.Compact>
-                                  {item.dataIndex == "language" ? (
+                                  {item.dataIndex == 'language' ? (
                                     <Select
                                       showSearch
                                       placeholder="Select a person"
                                       optionFilterProp="children"
                                       defaultValue={rec[item.dataIndex]}
                                       filterOption={(input, option) =>
-                                        (option?.label ?? "")
+                                        (option?.label ?? '')
                                           .toLowerCase()
                                           .includes(input.toLowerCase())
                                       }
                                       options={languageOptions}
                                       onChange={handleChange}
                                     />
-                                  ) : item.dataIndex == "mcq_count" ? (
+                                  ) : item.dataIndex == 'mcq_count' ? (
                                     <Input
                                       addonAfter={selectAfter(rec)}
                                       defaultValue={rec[item.dataIndex]}
                                     />
-                                  ) : item.dataIndex == "name" ? (
+                                  ) : item.dataIndex == 'name' ? (
                                     <Input
                                       defaultValue={testRecord[item.dataIndex]}
                                       disabled={true}
@@ -389,11 +386,11 @@ const AddTest = ({
                 </Col>
                 <div
                   style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "end",
-                    marginTop: "12px",
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'end',
+                    marginTop: '12px',
                   }}
                 >
                   <Button
@@ -403,7 +400,7 @@ const AddTest = ({
                     Cancel
                   </Button>
                   <Button
-                    style={{ marginLeft: "8px" }}
+                    style={{ marginLeft: '8px' }}
                     type="primary"
                     className="ant-btn ant-btn-primary"
                     onClick={form.submit}
@@ -418,7 +415,7 @@ const AddTest = ({
         </Modal>
       )}
     </>
-  );
-};
+  )
+}
 
-export default AddTest;
+export default AddTest

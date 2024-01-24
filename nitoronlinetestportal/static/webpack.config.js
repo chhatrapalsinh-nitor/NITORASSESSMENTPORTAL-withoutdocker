@@ -6,9 +6,9 @@ const Dotenv = require('dotenv-webpack')
 module.exports = {
   /*  mode and devtool added to enable debugging on client side.
   TODO: Need to add webpack.common.js, webpack.dev.js, webpack.prod.js to set the config based on the deployment env.
-  */ 
-   mode: 'development',
-   devtool: 'inline-source-map',
+  */
+  mode: 'development',
+  devtool: 'inline-source-map',
   entry: {
     frontend: './src/index.js',
   },
@@ -37,11 +37,13 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif)$/,
-        use: [{
+        use: [
+          {
             loader: 'file-loader',
-            options: {}
-        }]
-    }
+            options: {},
+          },
+        ],
+      },
     ],
   },
 }

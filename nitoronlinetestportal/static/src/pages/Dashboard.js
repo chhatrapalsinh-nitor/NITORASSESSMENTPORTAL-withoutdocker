@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import ComingSoon from "../assets/coming_soon.jpg";
-import { Image } from "antd";
+import React, { useEffect } from 'react'
+import PropTypes from 'prop-types'
+import ComingSoon from '../assets/coming_soon.jpg'
+import { Image } from 'antd'
 
 const Dashboard = (props) => {
   // trigger on component mount
   useEffect(() => {
-    props.setSelectedKey("dashboard");
-  }, []);
+    props.setSelectedKey('dashboard')
+  }, [])
 
   return (
     <>
@@ -20,17 +20,17 @@ const Dashboard = (props) => {
         preview={false}
       />
     </>
-  );
-};
+  )
+}
 
 Dashboard.propTypes = {
   setSelectedKey: PropTypes.func,
-};
+}
 
 Dashboard.defaultProps = {
   setSelectedKey: (key) => {
-    console.log(key);
+    console.log(key)
   },
-};
+}
 
-export default Dashboard;
+export default Dashboard

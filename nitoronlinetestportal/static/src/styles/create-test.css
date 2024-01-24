@@ -23,8 +23,9 @@
   vertical-align: middle;
   transition: background 0.25s;
 }
-.toggle-switch:before, .toggle-switch:after {
-  content: "";
+.toggle-switch:before,
+.toggle-switch:after {
+  content: '';
 }
 .toggle-switch:before {
   display: block;

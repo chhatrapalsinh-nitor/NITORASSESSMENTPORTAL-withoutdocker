@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@100;200;300;400;500;600;700;800&display=swap');
 
-
 .quiz-container {
   background: #ffffff;
   border-radius: 4px;
@@ -66,7 +65,7 @@
   cursor: not-allowed;
 }
 
-.quiz-container button:hover{
+.quiz-container button:hover {
   color: #ffffff !important;
 }
 
@@ -77,11 +76,10 @@
 
 .quiz-container button span {
   margin: auto;
-    line-height: 1.25rem; 
+  line-height: 1.25rem;
 
-    padding: 0px;
+  padding: 0px;
 }
-
 
 .result h3 {
   font-size: 24px;
@@ -99,43 +97,45 @@
   font-size: 22px;
 }
 
-.card-style-test{
+.card-style-test {
   width: 70%;
   height: 70%;
   background-color: #f0eded;
   box-shadow: 5px 8px 24px 5px rgba(0, 0, 0, 0.6);
 }
 
-.card-h1{
+.card-h1 {
   font-size: 2.5rem;
-  margin-bottom: 1rem!important;
+  margin-bottom: 1rem !important;
 }
 
-.card-p{
+.card-p {
   margin-top: 0;
   margin-bottom: 1rem;
 }
 
-.text-truncate{
-  color: #4e687e!important;
+.text-truncate {
+  color: #4e687e !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.text-nowrap{
-  color: #4e687e!important;
+.text-nowrap {
+  color: #4e687e !important;
 }
-.card-icon{
-  margin-right: 0.5rem!important;
+.card-icon {
+  margin-right: 0.5rem !important;
 }
 
-  /* DAYS OF THE WEEK */
+/* DAYS OF THE WEEK */
 div.days {
   margin: 0 auto;
   color: #131212;
 }
-div.days .day { display: inline-block; }
+div.days .day {
+  display: inline-block;
+}
 div.days .day p {
   font-size: 12px;
   font-weight: bold;
@@ -154,7 +154,9 @@ div.clock div p {
   z-index: 100;
 }
 
-div.clock .meridian { margin-left: 15px; }/*END CLOCK*/
+div.clock .meridian {
+  margin-left: 15px;
+} /*END CLOCK*/
 /* AM OR PM*/
 .am-pm {
   font-family: sans-serif;
@@ -166,6 +168,11 @@ div.am-pm div p {
   font-weight: bold;
   width: 100%;
 }
-.am, .pm { color: #131212; }
+.am,
+.pm {
+  color: #131212;
+}
 /*CLASS THAT CHANGES COLOR OF TEXT TO APPEAR LIKE ITS "ON"*/
-.light-on { color: #ffffff; }
+.light-on {
+  color: #ffffff;
+}
