@@ -81,7 +81,7 @@ const GenerateLink= (props) => {
                 <>
                     <Space>
                     <div>
-                    <ClipboardCopy copyText={`${baseURL}#/test/${record.test}/${record.key}`}    />
+                    <ClipboardCopy copyText={`${baseURL}#/screening/user-details/${record.test}/${record.key}`}    />
                     </div>   
                     <Tooltip placement="top" title="Open Link">
                         <OpenLinkIcon

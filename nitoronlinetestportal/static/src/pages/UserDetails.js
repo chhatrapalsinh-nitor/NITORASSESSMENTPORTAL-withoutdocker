@@ -85,6 +85,53 @@ const UserDeatils = () => {
                     <p className="form-title">Welcome</p>
                     <p>Provide user information to take the test.</p>
                     <Tabs>
+                        {/* Rules */}
+                        <Tabs.TabPane tab="Test Rule" key="tab-rule">
+                            <div>
+                            <Card>
+                                <Row>
+                                    <Col flex={2}>
+                                    <p class="text-truncate">
+                                        <span class="text-nowrap">
+                                            <CodeOutlined className="card-icon"/>
+                                        <small title="IDE" >IDE</small>
+                                        </span>
+                                    </p>
+                                    </Col>
+                                    <Col flex={3} span={15}>
+                                        <p> We recommend having an environment ready, so you can solve problems outside of the browser. </p>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col flex={2}>
+                                    <p class="text-truncate">
+                                        <span class="text-nowrap">
+                                        <BlockOutlined className="card-icon"/>
+                                        <small title="IDE" >Resources</small>
+                                        </span>
+                                    </p>
+                                    </Col>
+                                    <Col flex={3} span={15}>
+                                        <p> You can use any documentation, files, or other helpful resources.</p>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col flex={2}>
+                                    <p class="text-truncate">
+                                        <span class="text-nowrap">
+                                        <ClockCircleOutlined className="card-icon"/>
+                                        <small title="IDE">Duration</small>
+                                        </span>
+                                    </p>
+                                    </Col>
+                                    <Col flex={3} span={15}>
+                                    <p>30 minutes<small title="IDE">(no breaks allowed)</small></p>
+                                    </Col>
+                                </Row>    
+                            </Card>    
+                            </div>
+                        </Tabs.TabPane>
+                        
                         <Tabs.TabPane tab="Login" key="tab-login">
                             {userFormFields.map((item, index) => (
                             
@@ -108,56 +155,9 @@ const UserDeatils = () => {
                                 <Button type="primary" htmlType="submit" className="login-form-button" onClick={form.submit}>
                                 CONTINUE
                                 </Button>
-                                </Form.Item>
-                                
-                            </Tabs.TabPane>
-                            
-                            {/* Rules */}
-                            <Tabs.TabPane tab="Test Rule" key="tab-rule">
-                                <div>
-                                <Card>
-                                    <Row>
-                                        <Col flex={2}>
-                                        <p class="text-truncate">
-                                            <span class="text-nowrap">
-                                                <CodeOutlined className="card-icon"/>
-                                            <small title="IDE" >IDE</small>
-                                            </span>
-                                        </p>
-                                        </Col>
-                                        <Col flex={3} span={15}>
-                                            <p> We recommend having an environment ready, so you can solve problems outside of the browser. </p>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col flex={2}>
-                                        <p class="text-truncate">
-                                            <span class="text-nowrap">
-                                            <BlockOutlined className="card-icon"/>
-                                            <small title="IDE" >Resources</small>
-                                            </span>
-                                        </p>
-                                        </Col>
-                                        <Col flex={3} span={15}>
-                                            <p> You can use any documentation, files, or other helpful resources.</p>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col flex={2}>
-                                        <p class="text-truncate">
-                                            <span class="text-nowrap">
-                                            <ClockCircleOutlined className="card-icon"/>
-                                            <small title="IDE">Duration</small>
-                                            </span>
-                                        </p>
-                                        </Col>
-                                        <Col flex={3} span={15}>
-                                        <p>30 minutes<small title="IDE">(no breaks allowed)</small></p>
-                                        </Col>
-                                    </Row>    
-                                </Card>    
-                                </div>
-                            </Tabs.TabPane>
+                            </Form.Item>
+                        </Tabs.TabPane>
+
                     </Tabs>    
                 </Form>
 
