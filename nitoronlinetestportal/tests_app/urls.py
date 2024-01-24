@@ -18,6 +18,7 @@ from django.urls import path
 from tests_app.views import *
 
 urlpatterns = [
+    path('validate_test/', validate_test),
     path('create_update_test/', create_update_test),
     path('get_test_list/', get_test_list),
     path('generate_test/', generate_test),
