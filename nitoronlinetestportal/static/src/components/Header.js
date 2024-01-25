@@ -24,7 +24,14 @@ const Header = (props) => {
   }
 
   return (
-    <Layout.Header>
+    <Layout.Header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1,
+        width: '100%',
+      }}
+    >
       <Row>
         <Col span={2}>
           <Image src={NitorLogo} alt="Nitor Logo" width={100} preview={false} />
