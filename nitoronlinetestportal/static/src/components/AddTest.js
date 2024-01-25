@@ -123,7 +123,7 @@ const AddTest = ({
       return
     }
 
-    triggerFetchData('create_update_test/', dataList[0])
+    triggerFetchData('create_update_test/', dataList[dataList.length - 1])
       .then((data) => {
         message.success('Test created')
         fetchData()
@@ -179,7 +179,6 @@ const AddTest = ({
       dList = item
     })
     setDataList([dList])
-    createTest()
   }
 
   // Function to Calculate Weightage
@@ -361,7 +360,6 @@ const AddTest = ({
           onCancel={closeAddNewTestModal}
           width={900}
           okText="Submit"
-          footer={null}
         >
           <>
             {testRecord?.question_details?.map((rec, index) => (
@@ -447,34 +445,13 @@ const AddTest = ({
                             </Col>
                           </>
                         ))}
+                        <Button type="primary" ghost onClick={form.submit}>
+                          Update
+                        </Button>
                       </Row>
                     </Panel>
                   </Collapse>
                 </Col>
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'end',
-                    marginTop: '12px',
-                  }}
-                >
-                  <Button
-                    className="ant-btn ant-btn-default"
-                    onClick={closeAddNewTestModal}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    style={{ marginLeft: '8px' }}
-                    type="primary"
-                    className="ant-btn ant-btn-primary"
-                    onClick={form.submit}
-                  >
-                    Update
-                  </Button>
-                </div>
               </Form>
             ))}
             <br></br>

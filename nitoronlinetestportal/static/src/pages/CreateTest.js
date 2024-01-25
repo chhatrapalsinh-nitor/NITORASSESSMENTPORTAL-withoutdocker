@@ -236,7 +236,7 @@ const CreateTest = (props) => {
           Add New Test
         </Button>
 
-        {/* Table */}
+        {/* Table of all test*/}
         <Table
           loading={isLoading}
           columns={columns}
