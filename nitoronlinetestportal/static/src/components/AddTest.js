@@ -49,17 +49,26 @@ const AddTest = ({
   const [showNotEnoughQuesError, setShowNotEnoughQuesError] = useState(false)
   const [showNotEnoughQuesErrorMessage, setShowNotEnoughQuesErrorMessage] =
     useState('')
-
   const [dynamicScore, setDynamicScore] = useState(0)
   const [initialQuestionsValue, setInitialQuestionsValue] = useState(
     constInitialQuestionsValue,
   )
+  const [totalScoreWeightage, setTotalScoreWeightage] = useState(0)
 
   // Updating the Score Weightage dynamically
   useEffect(() => {
-    const d = calculateWeightage(initialQuestionsValue)
-    setDynamicScore(d)
+    const calculatedScore = calculateWeightage(initialQuestionsValue)
+    setDynamicScore(calculatedScore)
   }, [initialQuestionsValue])
+
+  // Updating the Total Score Weightage dynamically
+  useEffect(() => {
+    let sum = 0
+    dataList.map((data) => {
+      sum = sum + data.weightage
+    })
+    setTotalScoreWeightage(sum)
+  }, [dataList])
 
   // Table in Add New Test Modal
   const columns = [
@@ -349,7 +358,10 @@ const AddTest = ({
                 {showNotEnoughQuesError && (
                   <p style={{ color: 'red' }}>{showNotEnoughQuesErrorMessage}</p>
                 )}
-                <p>Score Weightage: {dynamicScore}</p>
+                <p>
+                  <b>Score Weightage: </b>
+                  {dynamicScore}
+                </p>
               </div>
 
               <Divider></Divider>
@@ -365,11 +377,25 @@ const AddTest = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                marginTop: '8px',
               }}
             >
               {showAddTestError && (
                 <p style={{ color: 'red' }}>Please add at least one Test!</p>
               )}
+            </div>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'end',
+                marginTop: '8px',
+              }}
+            >
+              <p>
+                <b>Total Score Weightage: </b> {totalScoreWeightage}
+              </p>
             </div>
           </Row>
         </Modal>
