@@ -145,18 +145,25 @@ const AddTest = ({
       question_details: [values],
     }
 
-    if (dataList.length == 0) {
-      setDataList((oldArray) => [...oldArray, form_data])
-      setComponentDisabled(false)
-      setShowAddTestError(false)
-    } else {
-      let filterArray = dataList.filter((item) => item.name == name)
-      filterArray.map((item) => {
-        form_data.question_details = [item.question_details[0], values]
-        setDataList((oldArray) => [...oldArray, form_data])
+    triggerFetchData('validate_test/', form_data)
+      .then((data) => {
+        if (dataList.length == 0) {
+          setDataList((oldArray) => [...oldArray, form_data])
+          setComponentDisabled(false)
+        } else {
+          let filterArray = dataList.filter((item) => item.name == name)
+          filterArray.map((item) => {
+            form_data.question_details = [item.question_details[0], values]
+            setDataList((oldArray) => [...oldArray, form_data])
+          })
+        }
+        setShowNotEnoughQuesErrorMessage('')
+        setShowNotEnoughQuesError(false)
       })
-      setShowAddTestError(false)
-    }
+      .catch((reason) => {
+        setShowNotEnoughQuesErrorMessage(reason && reason.error && reason.message)
+        setShowNotEnoughQuesError(reason && reason.error)
+      })
 
     setShowEditSection(false)
   }
@@ -327,6 +334,9 @@ const AddTest = ({
                 <Button type="primary" ghost onClick={form.submit}>
                   Add To List
                 </Button>
+                {showNotEnoughQuesError && (
+                  <p style={{ color: 'red' }}>{showNotEnoughQuesErrorMessage}</p>
+                )}
                 <p>Score Weightage: {dynamicScore}</p>
               </div>
 
@@ -345,9 +355,8 @@ const AddTest = ({
                 justifyContent: 'center',
               }}
             >
-              {showAddTestError && <p>Please add at least one Test!</p>}
-              {showNotEnoughQuesError && (
-                <p style={{ color: 'red' }}>{showNotEnoughQuesErrorMessage}</p>
+              {showAddTestError && (
+                <p style={{ color: 'red' }}>Please add at least one Test!</p>
               )}
             </div>
           </Row>
