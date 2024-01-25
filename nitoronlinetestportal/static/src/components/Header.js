@@ -8,21 +8,30 @@ import PropTypes from 'prop-types'
 
 import NitorLogo from '../assets/Nitor_white_logo.png'
 
-const logOutUser = async (history) => {
-  const res = await LogoutAPI()
-  if (res.status == 200) {
-    localStorage.removeItem('authdata')
-    message.success(res.data.message)
-    history.push('/')
-  } else {
-    message.error('Something went wrong!')
-  }
-}
-
 const Header = (props) => {
   const history = useHistory()
+
+  const logOutUser = async (history) => {
+    const res = await LogoutAPI()
+    if (res.status == 200) {
+      localStorage.removeItem('authdata')
+      message.success(res.data.message)
+      history.push('/')
+    } else {
+      message.error('Something went wrong!')
+    }
+    props.setSelectedKey('dashboard')
+  }
+
   return (
-    <Layout.Header>
+    <Layout.Header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1,
+        width: '100%',
+      }}
+    >
       <Row>
         <Col span={2}>
           <Image src={NitorLogo} alt="Nitor Logo" width={100} preview={false} />

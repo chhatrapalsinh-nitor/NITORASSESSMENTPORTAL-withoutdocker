@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import ComingSoon from '../assets/coming_soon.jpg'
+import ComingSoon from '../assets/dashboard_coming_soon.jpg'
 import { Image } from 'antd'
 
 const Dashboard = (props) => {
