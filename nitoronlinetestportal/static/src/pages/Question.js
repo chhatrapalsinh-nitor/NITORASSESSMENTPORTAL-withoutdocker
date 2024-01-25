@@ -109,10 +109,23 @@ const Question = (props) => {
       key: 'type',
       render: (_, record) => (
         <>
-          {record.type == 1 ? (
-            <Tag color="blue">MCQ Question</Tag>
-          ) : (
-            <Tag color="green">Program Question</Tag>
+          {record.type == 1 && record.difficulty == 1 && (
+            <Tag color="blue">Easy MCQ Question</Tag>
+          )}
+          {record.type == 1 && record.difficulty == 2 && (
+            <Tag color="blue">Medium MCQ Question</Tag>
+          )}
+          {record.type == 1 && record.difficulty == 3 && (
+            <Tag color="blue">Hard MCQ Question</Tag>
+          )}
+          {record.type == 2 && record.difficulty == 1 && (
+            <Tag color="green">Easy Program Question</Tag>
+          )}
+          {record.type == 2 && record.difficulty == 2 && (
+            <Tag color="green">Medium Program Question</Tag>
+          )}
+          {record.type == 2 && record.difficulty == 3 && (
+            <Tag color="green">Hard Program Question</Tag>
           )}
         </>
       ),

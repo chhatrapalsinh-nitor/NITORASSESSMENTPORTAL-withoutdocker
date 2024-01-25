@@ -52,7 +52,6 @@ import '../styles/create-test.css'
  */
 const { Panel } = Collapse
 const CreateTest = (props) => {
-  let filter_test_data = []
   const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false)
   const [isEditTestModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -69,6 +68,7 @@ const CreateTest = (props) => {
   }, [])
 
   const filter_test = () => {
+    let filter_test_data = []
     if (apiData) {
       apiData.data.map((data, index) => {
         if (!filter_test_data.some((item) => data.name === item.value)) {
@@ -236,7 +236,7 @@ const CreateTest = (props) => {
           Add New Test
         </Button>
 
-        {/* Table */}
+        {/* Table of all test*/}
         <Table
           loading={isLoading}
           columns={columns}

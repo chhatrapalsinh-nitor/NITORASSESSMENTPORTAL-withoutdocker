@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Input,
-  Layout,
   Button,
   message,
   Divider,
@@ -11,19 +10,24 @@ import {
   Form,
   Space,
   Tooltip,
-  Tag,
   Select,
   Row,
   Col,
-  List,
-  Typography,
-  Skeleton,
 } from 'antd'
 import { CreateTestForm, languageOptions } from '../Utils/constants'
-import { EditFilled, CloseOutlined } from '@ant-design/icons'
+import { CloseOutlined } from '@ant-design/icons'
 import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
-import { useFetch } from '../Utils/Hooks/useFetchAPI'
 const { Panel } = Collapse
+
+const constInitialQuestionsValue = {
+  easy_mcq_count: 0,
+  easy_program_count: 0,
+  hard_mcq_count: 0,
+  hard_program_count: 0,
+  mcq_difficulty: 0,
+  medium_mcq_count: 0,
+  medium_program_count: 0,
+}
 
 const AddTest = ({
   isAddTestModalOpen,
@@ -41,6 +45,30 @@ const AddTest = ({
   const [activeTab, setActiveTab] = useState('')
   const [selectedLanguage, setSelectedLanguage] = useState('')
   const [showEditSection, setShowEditSection] = useState(false)
+  const [showAddTestError, setShowAddTestError] = useState(false)
+  const [showNotEnoughQuesError, setShowNotEnoughQuesError] = useState(false)
+  const [showNotEnoughQuesErrorMessage, setShowNotEnoughQuesErrorMessage] =
+    useState('')
+  const [dynamicScore, setDynamicScore] = useState(0)
+  const [initialQuestionsValue, setInitialQuestionsValue] = useState(
+    constInitialQuestionsValue,
+  )
+  const [totalScoreWeightage, setTotalScoreWeightage] = useState(0)
+
+  // Updating the Score Weightage dynamically
+  useEffect(() => {
+    const calculatedScore = calculateWeightage(initialQuestionsValue)
+    setDynamicScore(calculatedScore)
+  }, [initialQuestionsValue])
+
+  // Updating the Total Score Weightage dynamically
+  useEffect(() => {
+    let sum = 0
+    dataList.map((data) => {
+      sum = sum + data.weightage
+    })
+    setTotalScoreWeightage(sum)
+  }, [dataList])
 
   // Table in Add New Test Modal
   const columns = [
@@ -107,7 +135,13 @@ const AddTest = ({
     if (testRecord) {
       dataList[0]['id'] = testRecord.id
     }
-    triggerFetchData('create_update_test/', dataList[0])
+
+    if (dataList.length === 0) {
+      setShowAddTestError(true)
+      return
+    }
+
+    triggerFetchData('create_update_test/', dataList[dataList.length - 1])
       .then((data) => {
         message.success('Test created')
         fetchData()
@@ -129,16 +163,26 @@ const AddTest = ({
       question_details: [values],
     }
 
-    if (dataList.length == 0) {
-      setDataList((oldArray) => [...oldArray, form_data])
-      setComponentDisabled(false)
-    } else {
-      let filterArray = dataList.filter((item) => item.name == name)
-      filterArray.map((item) => {
-        form_data.question_details = [item.question_details[0], values]
-        setDataList((oldArray) => [...oldArray, form_data])
+    triggerFetchData('validate_test/', form_data)
+      .then((data) => {
+        if (dataList.length == 0) {
+          setDataList((oldArray) => [...oldArray, form_data])
+          setComponentDisabled(false)
+        } else {
+          let filterArray = dataList.filter((item) => item.name == name)
+          filterArray.map((item) => {
+            form_data.question_details = [item.question_details[0], values]
+            setDataList((oldArray) => [...oldArray, form_data])
+          })
+        }
+        setShowNotEnoughQuesErrorMessage('')
+        setShowNotEnoughQuesError(false)
       })
-    }
+      .catch((reason) => {
+        setShowNotEnoughQuesErrorMessage(reason && reason.error && reason.message)
+        setShowNotEnoughQuesError(reason && reason.error)
+      })
+
     setShowEditSection(false)
   }
 
@@ -160,7 +204,6 @@ const AddTest = ({
       dList = item
     })
     setDataList([dList])
-    createTest()
   }
 
   // Function to Calculate Weightage
@@ -210,6 +253,15 @@ const AddTest = ({
 
   const onCollapseChange = (key) => {
     setActiveTab(key)
+  }
+
+  // Function to Update the Score Weightage dynamically
+  const handleCountInputChange = (index, value) => {
+    setInitialQuestionsValue((pre) => {
+      let temp = Object.assign({}, pre)
+      value == '' ? (temp[index] = 0) : (temp[index] = value)
+      return temp
+    })
   }
 
   return (
@@ -275,16 +327,43 @@ const AddTest = ({
                       ) : item.dataIndex == 'name' ? (
                         <Input disabled={!componentDisabled} />
                       ) : (
-                        <Input />
+                        <Input
+                          type="text"
+                          onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                              event.preventDefault()
+                            }
+                          }}
+                          onChange={(e) =>
+                            handleCountInputChange(item.dataIndex, e.target.value)
+                          }
+                        />
                       )}
                     </Form.Item>
                     <br></br>
                   </Col>
                 </>
               ))}
-              <Button type="primary" ghost onClick={form.submit}>
-                Add To List
-              </Button>
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Button type="primary" ghost onClick={form.submit}>
+                  Add To List
+                </Button>
+                {showNotEnoughQuesError && (
+                  <p style={{ color: 'red' }}>{showNotEnoughQuesErrorMessage}</p>
+                )}
+                <p>
+                  <b>Score Weightage: </b>
+                  {dynamicScore}
+                </p>
+              </div>
+
               <Divider></Divider>
             </Form>
             <Table
@@ -292,6 +371,32 @@ const AddTest = ({
               dataSource={dataList ? dataList : question_details}
               onChange={onChange}
             />
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '8px',
+              }}
+            >
+              {showAddTestError && (
+                <p style={{ color: 'red' }}>Please add at least one Test!</p>
+              )}
+            </div>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'end',
+                marginTop: '8px',
+              }}
+            >
+              <p>
+                <b>Total Score Weightage: </b> {totalScoreWeightage}
+              </p>
+            </div>
           </Row>
         </Modal>
       ) : (
@@ -302,7 +407,6 @@ const AddTest = ({
           onCancel={closeAddNewTestModal}
           width={900}
           okText="Submit"
-          footer={null}
         >
           <>
             {testRecord?.question_details?.map((rec, index) => (
@@ -372,7 +476,15 @@ const AddTest = ({
                                       disabled={true}
                                     />
                                   ) : (
-                                    <Input defaultValue={rec[item.dataIndex]} />
+                                    <Input
+                                      defaultValue={rec[item.dataIndex]}
+                                      type="text"
+                                      onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                          event.preventDefault()
+                                        }
+                                      }}
+                                    />
                                   )}
                                 </Space.Compact>
                               </Form.Item>
@@ -380,34 +492,13 @@ const AddTest = ({
                             </Col>
                           </>
                         ))}
+                        <Button type="primary" ghost onClick={form.submit}>
+                          Update
+                        </Button>
                       </Row>
                     </Panel>
                   </Collapse>
                 </Col>
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'end',
-                    marginTop: '12px',
-                  }}
-                >
-                  <Button
-                    className="ant-btn ant-btn-default"
-                    onClick={closeAddNewTestModal}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    style={{ marginLeft: '8px' }}
-                    type="primary"
-                    className="ant-btn ant-btn-primary"
-                    onClick={form.submit}
-                  >
-                    Update
-                  </Button>
-                </div>
               </Form>
             ))}
             <br></br>

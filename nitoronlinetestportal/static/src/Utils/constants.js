@@ -172,14 +172,8 @@ const CreateTestForm = [
     title: 'Language Name',
     dataIndex: 'language',
     key: 'language',
-    // render: (question_details) => question_details.map(language => language.name).join(),
     sorter: (a, b) => a.language - b.language,
   },
-  // {
-  //     title: 'MCQ Count',
-  //     dataIndex: 'mcq_count',
-  //     key: 'mcq_count',
-  // },
   {
     title: 'Easy MCQ Count',
     dataIndex: 'easy_mcq_count',
