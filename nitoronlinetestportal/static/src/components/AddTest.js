@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Input,
   Button,
@@ -18,6 +18,16 @@ import { CreateTestForm, languageOptions } from '../Utils/constants'
 import { CloseOutlined } from '@ant-design/icons'
 import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
 const { Panel } = Collapse
+
+const constInitialQuestionsValue = {
+  easy_mcq_count: 0,
+  easy_program_count: 0,
+  hard_mcq_count: 0,
+  hard_program_count: 0,
+  mcq_difficulty: 0,
+  medium_mcq_count: 0,
+  medium_program_count: 0,
+}
 
 const AddTest = ({
   isAddTestModalOpen,
@@ -41,16 +51,15 @@ const AddTest = ({
     useState('')
 
   const [dynamicScore, setDynamicScore] = useState(0)
+  const [initialQuestionsValue, setInitialQuestionsValue] = useState(
+    constInitialQuestionsValue,
+  )
 
-  let tempQuestions = {
-    easy_mcq_count: 0,
-    easy_program_count: 0,
-    hard_mcq_count: 0,
-    hard_program_count: 0,
-    mcq_difficulty: 0,
-    medium_mcq_count: 0,
-    medium_program_count: 0,
-  }
+  // Updating the Score Weightage dynamically
+  useEffect(() => {
+    const d = calculateWeightage(initialQuestionsValue)
+    setDynamicScore(d)
+  }, [initialQuestionsValue])
 
   // Table in Add New Test Modal
   const columns = [
@@ -237,10 +246,13 @@ const AddTest = ({
     setActiveTab(key)
   }
 
+  // Function to Update the Score Weightage dynamically
   const handleCountInputChange = (index, value) => {
-    tempQuestions[index] = value
-    const score = calculateWeightage(tempQuestions)
-    setDynamicScore(isNaN(score) ? 0 : score)
+    setInitialQuestionsValue((pre) => {
+      let temp = Object.assign({}, pre)
+      value == '' ? (temp[index] = 0) : (temp[index] = value)
+      return temp
+    })
   }
 
   return (
