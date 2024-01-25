@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react'
 // import  useFetch  from "../Utils/Hooks/useFetchAPI";
 
 const CandidateTest = () => {
-    return (<h1>Candidate test Page</h1>)
-    
-/*
+  return <h1>Candidate test Page</h1>
+
+  /*
 To test the custom Hook for API call
     const { isLoading, serverError, apiData } = useFetch(
        "/posts/1",
@@ -22,4 +22,4 @@ To test the custom Hook for API call
       );
       */
 }
-export default CandidateTest;
+export default CandidateTest

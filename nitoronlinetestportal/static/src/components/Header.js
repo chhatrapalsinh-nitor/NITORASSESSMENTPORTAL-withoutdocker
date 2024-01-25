@@ -1,33 +1,33 @@
-import React from "react";
-import { Layout, Menu, Image, Row, Col, Button } from "antd";
-import { withRouter, useHistory, Link } from "react-router-dom";
-import { LoginOutlined } from "@ant-design/icons";
-import { LogoutAPI } from "../Utils/Hooks/useFetchAPI";
-import { message } from "antd";
-import PropTypes from "prop-types";
+import React from 'react'
+import { Layout, Menu, Image, Row, Col, Button } from 'antd'
+import { withRouter, useHistory, Link } from 'react-router-dom'
+import { LoginOutlined } from '@ant-design/icons'
+import { LogoutAPI } from '../Utils/Hooks/useFetchAPI'
+import { message } from 'antd'
+import PropTypes from 'prop-types'
 
-import NitorLogo from "../assets/Nitor_white_logo.png";
+import NitorLogo from '../assets/Nitor_white_logo.png'
 
 const logOutUser = async (history) => {
-  const res = await LogoutAPI();
+  const res = await LogoutAPI()
   if (res.status == 200) {
-    localStorage.removeItem("authdata");
-    message.success(res.data.message);
-    history.push("/");
+    localStorage.removeItem('authdata')
+    message.success(res.data.message)
+    history.push('/')
   } else {
-    message.error("Something went wrong!");
+    message.error('Something went wrong!')
   }
-};
+}
 
 const Header = (props) => {
-  const history = useHistory();
+  const history = useHistory()
   return (
     <Layout.Header>
       <Row>
         <Col span={2}>
           <Image src={NitorLogo} alt="Nitor Logo" width={100} preview={false} />
         </Col>
-        {history.location.pathname.includes("/screening") ? null : (
+        {history.location.pathname.includes('/screening') ? null : (
           <>
             <Col span={21}>
               <Menu
@@ -82,10 +82,7 @@ const Header = (props) => {
                 type="primary"
                 shape="round"
                 icon={
-                  <LoginOutlined
-                    size="small"
-                    onClick={() => logOutUser(history)}
-                  />
+                  <LoginOutlined size="small" onClick={() => logOutUser(history)} />
                 }
               />
             </Col>
@@ -93,15 +90,15 @@ const Header = (props) => {
         )}
       </Row>
     </Layout.Header>
-  );
-};
+  )
+}
 
 Header.propTypes = {
   selectedKey: PropTypes.string,
-};
+}
 
 Header.defaultProps = {
-  selectedKey: "dashboard",
-};
+  selectedKey: 'dashboard',
+}
 
-export default withRouter(Header);
+export default withRouter(Header)

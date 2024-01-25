@@ -111,6 +111,71 @@ def create_update_test(request):
     if not tds.is_valid():
         return standard_json_response(message=tds.errors, status_code=status.HTTP_400_BAD_REQUEST)
 
+    tds.validated_data['total_questions'] = 0
+    valid_question_types = ["easy_mcq_count", "medium_mcq_count", "hard_mcq_count", 'easy_program_count', 'medium_program_count', 'hard_program_count']
+    for details in tds.validated_data['question_details']:
+        for question_type, question_count in details.items():
+            if question_type not in valid_question_types:
+                continue
+            tds.validated_data['total_questions'] += question_count
+    
+    tds.validated_data['is_active'] = True
+
+    tds.save()
+
+    return standard_json_response(data=tds.data, status_code=status.HTTP_201_CREATED)
+
+@api_view(('POST',))
+@permission_classes((IsAuthenticated, ))
+def validate_test(request):
+    """
+    Request JSON:
+    {
+        "name" : "WellSky Backend Test",
+        "question_details": [
+            {
+                "language": "python",
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
+                "easy_program_count": 1,
+                "medium_program_count": 2,
+                "hard_program_count": 3
+            },
+            {
+                "language": "javascript",
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
+                "easy_program_count": 1,
+                "medium_program_count": 2,
+                "hard_program_count": 1
+            },
+            {
+                "language": "graphql",
+                "easy_mcq_count": "2",
+                "medium_mcq_count": "2",
+                "hard_mcq_count": "2",
+                "easy_program_count": 0,
+                "medium_program_count": 0,
+                "hard_program_count": 0
+            }
+        ]
+    }
+    """
+    test = None
+    if "id" in request.data:
+        try:
+            test = TestsDetails.objects.get(id=request.data["id"])
+        except TestsDetails.DoesNotExist as e:
+            return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
+
+    request.data["duration"] = get_total_duration(request.data["question_details"])
+    tds = TestDetailSerializer(data=request.data, instance=test)
+
+    if not tds.is_valid():
+        return standard_json_response(message=tds.errors, status_code=status.HTTP_400_BAD_REQUEST)
+
     valid_question_types = ["easy_mcq_count", "medium_mcq_count", "hard_mcq_count", 'easy_program_count', 'medium_program_count', 'hard_program_count']
     tds.validated_data['total_questions'] = 0
     for details in tds.validated_data['question_details']:
@@ -134,11 +199,8 @@ def create_update_test(request):
             get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count)
         except Exception as e:
             return standard_json_response(message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
-    tds.validated_data['is_active'] = True
 
-    tds.save()
-
-    return standard_json_response(data=tds.data, status_code=status.HTTP_201_CREATED)
+    return standard_json_response(data=[], status_code=status.HTTP_201_CREATED)
 
 
 @api_view(('GET',))
@@ -234,7 +296,7 @@ def get_random_mcq_answers(language, difficulty, limit):
             difficulty_level = "Medium"
         elif difficulty == Question.HARD :
             difficulty_level = "Hard"
-        raise Exception(f"There are not enough {difficulty_level} MCQ question, As, we have only {len(all_questions)} Existing {difficulty_level} Programs")
+        raise Exception(f"There are not enough {difficulty_level} MCQ question, As, we have only {len(all_questions)} Existing {difficulty_level} MCQs")
 
 
     limited_random_questions = random.sample(all_questions, limit)
