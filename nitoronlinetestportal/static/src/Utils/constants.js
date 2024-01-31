@@ -12,6 +12,7 @@ const templateJSONData = {
       option3: null,
       option4: null,
       correct_value: 'Yes',
+      duration: 60,
     },
   ],
   programs: [
@@ -24,6 +25,7 @@ const templateJSONData = {
       case2: 'case2',
       case3: 'case3',
       case4: 'case4',
+      duration: 300,
     },
   ],
 }
