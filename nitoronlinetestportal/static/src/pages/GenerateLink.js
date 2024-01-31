@@ -32,6 +32,9 @@ const GenerateLink = (props) => {
   const [testList, setTestList] = useState()
   const [rowRecord, setRowRecord] = useState(false)
   const [record, setRecord] = useState(null)
+  const [showNotEnoughQuesError, setShowNotEnoughQuesError] = useState(false)
+  const [showNotEnoughQuesErrorMessage, setShowNotEnoughQuesErrorMessage] =
+    useState('')
 
   const { isLoading, serverError, apiData, fetchData } = useFetch('get_test_link')
 
@@ -138,8 +141,14 @@ const GenerateLink = (props) => {
         message.success('Test Link Generated')
         setIsModalOpen(false)
         fetchData()
+        setShowNotEnoughQuesErrorMessage('')
+        setShowNotEnoughQuesError(false)
       })
-      .catch((reason) => message.error(reason))
+      .catch((reason) => {
+        setShowNotEnoughQuesErrorMessage(reason && reason.error && reason.message)
+        setShowNotEnoughQuesError(reason && reason.error)
+        message.error(reason)
+      })
   }
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo)
@@ -258,6 +267,9 @@ const GenerateLink = (props) => {
                 </Form.Item>
               </>
             ))}
+            {showNotEnoughQuesError && (
+              <p style={{ color: 'red' }}>{showNotEnoughQuesErrorMessage}</p>
+            )}
           </Form>
         </Modal>
       </Layout.Content>
