@@ -7,13 +7,16 @@ import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
 import { CodeOutlined, ClockCircleOutlined, BlockOutlined } from '@ant-design/icons'
 import LinkExpired from '../components/LinkExpired'
 
+/*
+  This is a welcome where user will be able to check the test Rule and login page will be open
+*/
 const UserDeatils = () => {
   const [form] = Form.useForm()
-  const [questions, setQuestions] = useState([])
-  const [linkExpire, setLinkExpire] = useState(false)
   const search = useLocation()
   const history = useHistory()
   const path = search.pathname.split('/')
+  const [questions, setQuestions] = useState([])
+  const [linkExpire, setLinkExpire] = useState(false)
   const [isCompleted, setIsCompleted] = useState(
     'user_details' in localStorage
       ? JSON.parse(localStorage.getItem('user_details'))['completed']
@@ -22,6 +25,11 @@ const UserDeatils = () => {
         : false,
   )
 
+  useEffect(() => {
+    getGeneratedTest(path[3])
+  }, [''])
+
+  // Function too generate the test details
   const getGeneratedTest = (testId) => {
     let url = `generate_test/?testId=${testId}&key=${path[4]}`
     if (localStorage.getItem('user_details') != null) {
@@ -41,6 +49,7 @@ const UserDeatils = () => {
       .catch((reason) => message.error(reason))
   }
 
+  // Function to set user details in local storage after successfully login
   const onFinish = async (values) => {
     values['key'] = path[4]
     values['generated_question'] = questions
@@ -58,10 +67,6 @@ const UserDeatils = () => {
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo)
   }
-
-  useEffect(() => {
-    getGeneratedTest(path[3])
-  }, [''])
 
   return (
     <>
@@ -173,7 +178,6 @@ const UserDeatils = () => {
                 </Tabs.TabPane>
               </Tabs>
             </Form>
-
             {isCompleted ? <LinkExpired showModal={isCompleted} /> : <></>}
           </div>
         </div>

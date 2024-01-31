@@ -12,10 +12,13 @@ const goBack = () => {
 }
 
 function LinkExpired(modalName) {
-  localStorage.setItem(
-    'linkExpired',
-    JSON.stringify({ expired: true, module_name: modalName.modalName }),
-  )
+  React.useEffect(() => {
+    localStorage.setItem(
+      'linkExpired',
+      JSON.stringify({ expired: true, module_name: modalName.modalName }),
+    )
+  }, [])
+
   return (
     <Modal title="Link Expired" open={true} footer={null} closable={false}>
       {modalName.modalName == 'userComplete' ? (
