@@ -24,6 +24,10 @@ const { Panel } = Collapse
 
 const OpenLinkIcon = (props) => <Icon component={openLinkSvg} {...props} />
 
+/* 
+  This components represent all the generated test link in table formate
+  Also, we can create new test link with the help of this component
+*/
 const GenerateLink = (props) => {
   let filter_test_data = []
   let filter_test_link_data = []
