@@ -23,9 +23,10 @@ import PropTypes from 'prop-types'
 const { Panel } = Collapse
 
 const OpenLinkIcon = (props) => <Icon component={openLinkSvg} {...props} />
+
 const GenerateLink = (props) => {
   let filter_test_data = []
-  let filter_testlink_data = []
+  let filter_test_link_data = []
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [form] = Form.useForm()
   const [endDate, setEndDate] = useState()
@@ -35,28 +36,53 @@ const GenerateLink = (props) => {
 
   const { isLoading, serverError, apiData, fetchData } = useFetch('get_test_link')
 
-  // trigger on component mount
+  // Trigger on component mount for setting the header tab
   useEffect(() => {
     props.setSelectedKey('generate-link')
+    getTestList()
   }, [])
 
-  const filter_testlink = () => {
+  // Get all the test details to show in select options
+  const getTestList = () => {
+    triggerFetchData('get_test_list/', {}, 'GET')
+      .then((data) => {
+        setTestList(data.data)
+      })
+      .catch((reason) => message.error(reason))
+  }
+
+  if (testList) {
+    testList.map((data, index) => {
+      if (!filter_test_data.some((item) => data.name === item.value)) {
+        filter_test_data.push({ label: data.name, value: data.id })
+      }
+    })
+  }
+
+  // Function to filter the generated test link table
+  const filterTestLink = () => {
     if (apiData) {
       apiData.data?.map((data, index) => {
-        if (!filter_testlink_data.some((item) => data.name === item.name)) {
-          filter_testlink_data.push({ value: data.name, text: data.name })
+        if (!filter_test_link_data.some((item) => data.name === item.name)) {
+          filter_test_link_data.push({ value: data.name, text: data.name })
         }
       })
     }
-    return filter_testlink_data
+    return filter_test_link_data
   }
 
+  // Function to go on screen test page
+  const goToScreeningTest = (record, history) => {
+    window.open(`/#/screening/user-details/${record.test}/${record.key}`, '_blank')
+  }
+
+  // Tables column
   const list_columns = [
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filters: filter_testlink(),
+      filters: filterTestLink(),
       onFilter: (value, record) => record.name.indexOf(value) === 0,
       filterSearch: true,
       sorter: (a, b) => a.name.length - b.name.length,
@@ -105,7 +131,7 @@ const GenerateLink = (props) => {
                 style={{
                   fontSize: '32px',
                 }}
-                onClick={() => routeChange(record)}
+                onClick={() => goToScreeningTest(record)}
               />
             </Tooltip>
           </Space>
@@ -114,23 +140,38 @@ const GenerateLink = (props) => {
     },
   ]
 
+  const onTableChange = (pagination, filters, sorter, extra) => {
+    console.log('value:', pagination, filters, sorter, extra)
+  }
+
+  const handleOk = (values) => {
+    setRowRecord(null)
+  }
+
+  // Handle Date Change
+  const onDateChange = (date, dateString) => {
+    setEndDate(dateString)
+  }
+
+  // Function to show details view
   const showDetailModal = (record) => {
     setRecord(record)
     setRowRecord(true)
   }
 
-  const routeChange = (record, history) => {
-    window.open(`/#/screening/user-details/${record.test}/${record.key}`, '_blank')
-  }
-
-  const showModal = () => {
+  // Function to open form
+  const showGeneratedTestLinkModal = () => {
     setIsModalOpen(true)
   }
-  const handleCancel = () => {
+
+  // Function to close form
+  const closeGeneratedTestLinkModal = () => {
     setIsModalOpen(false)
     setRowRecord(null)
   }
-  const onFinish = async (values) => {
+
+  // Function to submit the Generate Test Link Form
+  const submitGeneratedLinkForm = async (values) => {
     let end_date = endDate + ' 00:00:00'
     values.end_date = end_date
     triggerFetchData('generate_test_link/', values)
@@ -141,64 +182,28 @@ const GenerateLink = (props) => {
       })
       .catch((reason) => message.error(reason))
   }
+
+  // Function to handle the Form failed
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo)
-  }
-
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log('value:', pagination, filters, sorter, extra)
-  }
-
-  const onDateChange = (date, dateString) => {
-    console.log(date.$d, dateString)
-    setEndDate(dateString)
-  }
-
-  const onSearch = (value) => {
-    console.log('search:', value)
-  }
-
-  const getTestList = () => {
-    triggerFetchData('get_test_list/', {}, 'GET')
-      .then((data) => {
-        setTestList(data.data)
-      })
-      .catch((reason) => message.error(reason))
-  }
-
-  useEffect(() => {
-    console.log('executed only once!')
-    getTestList()
-  }, [''])
-
-  if (testList) {
-    testList.map((data, index) => {
-      if (!filter_test_data.some((item) => data.name === item.value)) {
-        filter_test_data.push({ label: data.name, value: data.id })
-      }
-    })
-  }
-
-  const handleOk = (values) => {
-    setRowRecord(null)
   }
 
   return (
     <>
       <Layout.Content style={{ height: '100vh', padding: '1rem' }}>
-        <Button type="primary" onClick={showModal}>
+        <Button type="primary" onClick={showGeneratedTestLinkModal}>
           Generate Test Link
         </Button>
         <Table
           columns={list_columns}
           dataSource={apiData ? apiData.data : []}
-          onChange={onChange}
+          onChange={onTableChange}
         />
         <Modal
           title="Generate Test Link"
           open={isModalOpen}
           onOk={form.submit}
-          onCancel={handleCancel}
+          onCancel={closeGeneratedTestLinkModal}
         >
           <Form
             form={form}
@@ -215,7 +220,7 @@ const GenerateLink = (props) => {
             initialValues={{
               remember: true,
             }}
-            onFinish={onFinish}
+            onFinish={submitGeneratedLinkForm}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
@@ -237,14 +242,11 @@ const GenerateLink = (props) => {
                       style={{ width: 100 + '%' }}
                       onChange={onDateChange}
                     />
-                  ) : // <DatePicker onChange={onChange} format={dateFormat} disabledDate={displayDateFormat}/>
-                  item.dataIndex == 'test' ? (
+                  ) : item.dataIndex == 'test' ? (
                     <Select
                       showSearch
                       placeholder="Select a person"
                       optionFilterProp="children"
-                      onChange={onChange}
-                      onSearch={onSearch}
                       filterOption={(input, option) =>
                         (option?.label ?? '')
                           .toLowerCase()
@@ -268,7 +270,7 @@ const GenerateLink = (props) => {
             title={record.test_details.name}
             open={rowRecord}
             onOk={handleOk}
-            onCancel={handleCancel}
+            onCancel={closeGeneratedTestLinkModal}
           >
             {record.test_details?.question_details?.map((item, index) => (
               <Collapse key={`collapse-index-${index}`} defaultActiveKey={['1']}>
