@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter, useLocation, useHistory } from 'react-router-dom'
-import { Button, message, Layout, Card, Row, Col, Menu } from 'antd'
+import { Button, message, Layout, Card, Row, Col, Menu, Steps } from 'antd'
 import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
 import '../styles/generate-test.css'
 import TestCodeEditor from '../pages/TestCodeEditor'
@@ -8,65 +8,10 @@ import LinkExpired from '../components/LinkExpired'
 import WebCam from '../components/WebCam'
 import { usePageVisibility } from '../Utils/Hooks/usePageVisibility'
 
-// let questions = {
-//     "error": false,
-//     "message": "",
-//     "status": 200,
-//     "data": {
-//         "python": [
-//             {
-//                 "option1": "Answer1",
-//                 "option2": "Answer2",
-//                 "option3": "Answer3",
-//                 "option4": "Answer4",
-//                 "correct_value": "Answer1",
-//                 "question": 1,
-//                 "question_details": {
-//                     "id": 1,
-//                     "name": "Is python a programming language?",
-//                     "type": 1,
-//                     "difficulty": 1,
-//                     "language": "python"
-//                 }
-//             },
-//             {
-//                 "option1": "Answer1",
-//                 "option2": "Answer2",
-//                 "option3": "Answer3",
-//                 "option4": "Answer4",
-//                 "correct_value": "Answer4",
-//                 "question": 7,
-//                 "question_details": {
-//                     "id": 7,
-//                     "name": "Is python a programming language?",
-//                     "type": 1,
-//                     "difficulty": 1,
-//                     "language": "python"
-//                 }
-//             },
-//             {
-//                 "case1": "case1",
-//                 "case2": "case2",
-//                 "case3": "case3",
-//                 "case4": "case4",
-//                 "question": 4,
-//                 "question_details": {
-//                     "id": 4,
-//                     "name": "Write a program",
-//                     "type": 2,
-//                     "difficulty": 1,
-//                     "language": "python"
-//                 }
-//             }
-//         ]
-//     }
-// }
-
 const GenerateTest = () => {
   const history = useHistory()
   const search = useLocation()
   const [questions, setQuestions] = useState([])
-  const [activeQuestion, setActiveQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState('')
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null)
   const [showCodeEditor, setShowCodeEditor] = useState(false)
@@ -90,7 +35,6 @@ const GenerateTest = () => {
         : false,
   )
   const path = search.pathname.split('/')
-
   const [counter, setCounter] = useState(
     'user_details' in localStorage
       ? JSON.parse(localStorage.getItem('user_details'))['generated_question'][
@@ -101,34 +45,34 @@ const GenerateTest = () => {
   const minutes = Math.floor(counter / 60)
   const seconds = Math.floor(counter % 60)
   const [isLinkExpired, setIsLinkExpired] = useState({})
-
   const [result, setResult] = useState({
     score: 0,
     correctAnswers: 0,
     wrongAnswers: 0,
   })
-
   const pageVisibilityStatus = usePageVisibility()
-
   const [items, setItems] = useState([])
   const [questionData, setQuestionData] = useState([])
   const [languages, setLanguages] = useState([])
   const [selectedQuestion, setSelectedQuestion] = useState()
   const [defaultMenuKey, setDefaultMenuKey] = useState()
   const [isSecondLastItem, setIsSecondLastItem] = useState(false)
+  const [showPreviousButton, setShowPreviousButton] = useState(false)
+  const [stepsItems, setStepsItems] = useState([])
+  const [current, setCurrent] = useState(0)
 
   // Use effect for handling the page switch
   useEffect(() => {
     const pageSwitchCount = parseInt(localStorage.getItem('screen_change')) || 0
     if (pageVisibilityStatus) {
-      localStorage.setItem('screen_change', pageSwitchCount + 1)
-      if (pageSwitchCount >= 3) {
-        alert(`Your exam link has expired due to switching browser tabs frequently.`)
-        setIsCompleted(true)
-      } else {
-        alert(
-          `Warning ${pageSwitchCount + 1}: You are not allowed to leave the page. Your progress may be lost.`,
-        )
+    localStorage.setItem('screen_change', pageSwitchCount + 1)
+    if (pageSwitchCount >= 3) {
+    alert(`Your exam link has expired due to switching browser tabs frequently.`)
+    setIsCompleted(true)
+    } else {
+    alert(
+    `Warning ${pageSwitchCount + 1}: You are not allowed to leave the page. Your progress may be lost.`,
+    )
       }
     }
   }, [pageVisibilityStatus])
@@ -144,17 +88,6 @@ const GenerateTest = () => {
     )
   }, [showResult])
 
-  // Test Score set at end
-  useEffect(() => {
-    setScore(
-      'user_score_details' in localStorage
-        ? JSON.parse(localStorage.getItem('user_score_details'))['score'][
-            'candidateScore'
-          ]
-        : [],
-    )
-  }, [])
-
   // Set Counter
   useEffect(() => {
     if (counter > 0) {
@@ -169,8 +102,6 @@ const GenerateTest = () => {
     setShowCodeEditor(true)
     setShowText(false)
   }
-
-  const addLeadingZero = (number) => (number > 9 ? number : `0${number}`)
 
   // Use effect for setting the questions details
   useEffect(() => {
@@ -194,16 +125,8 @@ const GenerateTest = () => {
     }
   }, [''])
 
-  function getItemItem(label, key, children) {
-    return {
-      key,
-      children,
-      label,
-    }
-  }
-
-  // Menu Item setting
-  useEffect(() => {
+   // Menu Item setting
+   useEffect(() => {
     if ('user_details' in localStorage) {
       let data = JSON.parse(localStorage.getItem('user_details'))[
         'generated_question'
@@ -244,6 +167,23 @@ const GenerateTest = () => {
         )
       })
       setItems(items)
+
+      // setting steps items
+      menuItemsData.map((item) => {
+        item.languageQuestions.map((ques, index) => {
+          setStepsItems((current) => [
+            ...current,
+            {
+              key: ques.question,
+              title: ques.question_details.type == 1 ? 'MCQ' : 'Program',
+              description:
+                ques.question_details.language.charAt(0).toUpperCase() +
+                ques.question_details.language.slice(1),
+              status: 'wait',
+            },
+          ])
+        })
+      })
     } else {
       history.push(`/screening/user-details/${path[3]}/${path[4]}`)
     }
@@ -253,6 +193,15 @@ const GenerateTest = () => {
       setIsLinkExpired(linkExpired)
     }
   }, [])
+
+
+  function getItemItem(label, key, children) {
+    return {
+      key,
+      children,
+      label,
+    }
+  }
 
   // Menu Click Handling
   const onMenuClick = ({ item, key, keyPath, domEvent }) => {
@@ -272,10 +221,10 @@ const GenerateTest = () => {
 
   // Function to handle Next button Click
   const goToNextQuestion = (question_details) => {
+    setCurrent(current + 1)
     for (let i = 0; i < questionData.length; i++) {
       if (questionData[i].questionId == defaultMenuKey) {
         if ((i + 1) % questionData.length === 0) {
-          console.log('Last Item Done')
           saveAnswer(question_details, '', result, true)
           setShowResult(true)
           return
@@ -283,6 +232,11 @@ const GenerateTest = () => {
 
         if (i + 1 == questionData.length - 1) {
           setIsSecondLastItem(true)
+        }
+
+        // Show previous button
+        if (i + 1 > 0) {
+          setShowPreviousButton(true)
         }
 
         saveAnswer(question_details, selectedAnswerIndex, result, false)
@@ -293,7 +247,33 @@ const GenerateTest = () => {
     }
   }
 
-  const onAnswerSelected = (answer) => {
+  // Function to handle Next button Click
+  const goToPreviousQuestion = (question_details) => {
+    setCurrent(current - 1)
+    setIsSecondLastItem(false)
+    for (let i = 0; i < questionData.length; i++) {
+      if (questionData[i].questionId == defaultMenuKey) {
+        if (i === 1) {
+          setShowPreviousButton(false)
+        }
+        saveAnswer(question_details, selectedAnswerIndex, result, false)
+        setSelectedAnswerIndex(null)
+        setDefaultMenuKey(questionData[i - 1].questionId)
+        setSelectedQuestion(questionData[i - 1].questionDetails)
+      }
+    }
+  }
+
+  // Function to handle once question selected
+  const onAnswerSelected = (answer, selectedQuestionId) => {
+    const updatedSteps = stepsItems.map((step) => {
+      if (step.key == selectedQuestionId) {
+        step.status = 'Finished'
+      }
+      return step
+    })
+
+    setStepsItems(updatedSteps)
     setSelectedAnswerIndex(answer)
     if (answer === correct_value) {
       setSelectedAnswer(true)
@@ -312,6 +292,7 @@ const GenerateTest = () => {
     }
   }
 
+  // Function to save answer
   const saveAnswer = (question_details, selectedAnswerIndex, score, finish) => {
     let request_data = {
       userTestId: JSON.parse(localStorage.getItem('user_details'))['id'],
@@ -326,7 +307,8 @@ const GenerateTest = () => {
     triggerFetchData(`save_candidate_answer/`, request_data)
       .then((data) => {
         if (data.data.completed) {
-          // setScore(data.data);
+          setScore(data.data)
+          setShowResult(true)
           let candidateScore = {
             score: data.data.score,
             correct_answers: data.data.correct_answers,
@@ -395,7 +377,7 @@ const GenerateTest = () => {
                     </span>
                   </Col> */}
                   {/* Time Left */}
-                  <Col span={2}>
+                  <Col span={4}>
                     {counter > 0 ? (
                       <div className="timer">
                         {/* <!-- MINUTE --> */}
@@ -418,14 +400,32 @@ const GenerateTest = () => {
                     )}
                   </Col>
                 </Row>
-                <h2>{question_details.name}</h2>
+                {/* Stepper */}
+                <Row style={{ marginTop: '16px' }}>
+                  <Steps
+                    type="navigation"
+                    size="small"
+                    current={current}
+                    className="site-navigation-steps"
+                    items={stepsItems}
+                  />
+                </Row>
+                {/* Question Name */}
+                <Row>
+                  <Col style={{ marginTop: '16px' }}>
+                    <h2>{question_details.name}</h2>
+                  </Col>
+                </Row>
+                {/* Question Details */}
                 <div className="container">
                   {/* MCQ Question Type */}
                   {question_details.type == 1 ? (
                     <ul>
                       {option1 ? (
                         <li
-                          onClick={() => onAnswerSelected(option1)}
+                          onClick={() =>
+                            onAnswerSelected(option1, question_details.id)
+                          }
                           key={option1}
                           className={
                             selectedAnswerIndex === option1
@@ -440,7 +440,9 @@ const GenerateTest = () => {
                       ) : null}
                       {option2 ? (
                         <li
-                          onClick={() => onAnswerSelected(option2)}
+                          onClick={() =>
+                            onAnswerSelected(option2, question_details.id)
+                          }
                           key={option2}
                           className={
                             selectedAnswerIndex === option2
@@ -455,7 +457,9 @@ const GenerateTest = () => {
                       ) : null}
                       {option3 ? (
                         <li
-                          onClick={() => onAnswerSelected(option3)}
+                          onClick={() =>
+                            onAnswerSelected(option3, question_details.id)
+                          }
                           key={option3}
                           className={
                             selectedAnswerIndex === option3
@@ -470,7 +474,9 @@ const GenerateTest = () => {
                       ) : null}
                       {option4 ? (
                         <li
-                          onClick={() => onAnswerSelected(option4)}
+                          onClick={() =>
+                            onAnswerSelected(option4, question_details.id)
+                          }
                           key={option4}
                           className={
                             selectedAnswerIndex === option4
@@ -483,9 +489,19 @@ const GenerateTest = () => {
                           {option4}
                         </li>
                       ) : null}
+                      {showPreviousButton && (
+                        <Button
+                          className="flex-left"
+                          onClick={() => goToPreviousQuestion(question_details)}
+                        >
+                          Previous
+                        </Button>
+                      )}
+
                       <Button
                         className="flex-left"
                         onClick={() => goToNextQuestion(question_details)}
+                        style={{ marginLeft: showPreviousButton ? '8px' : '0px' }}
                       >
                         {isSecondLastItem ? 'Finish' : 'Next'}
                       </Button>
@@ -502,9 +518,23 @@ const GenerateTest = () => {
                         {showCodeEditor ? (
                           <>
                             <TestCodeEditor />
+                            {showPreviousButton && (
+                              <Button
+                                className="flex-left"
+                                onClick={() =>
+                                  goToPreviousQuestion(question_details)
+                                }
+                              >
+                                Previous
+                              </Button>
+                            )}
+
                             <Button
                               className="flex-left"
                               onClick={() => goToNextQuestion(question_details)}
+                              style={{
+                                marginLeft: showPreviousButton ? '8px' : '0px',
+                              }}
                             >
                               {isSecondLastItem ? 'Finish' : 'Next'}
                             </Button>
@@ -518,6 +548,7 @@ const GenerateTest = () => {
             </div>
           </>
         ) : score && !isCompleted && !isLinkExpired['expired'] ? (
+          // Test Score section
           <Layout className="layout parent-container">
             <Card
               style={{
