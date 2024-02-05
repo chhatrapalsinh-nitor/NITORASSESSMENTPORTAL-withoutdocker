@@ -11,6 +11,7 @@ class TestsDetails(models.Model):
     is_active = models.BooleanField(default=False)
     duration = models.DurationField(null=True)
     weightage = models.IntegerField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True)
 
 
 class TestAllocations(models.Model):
