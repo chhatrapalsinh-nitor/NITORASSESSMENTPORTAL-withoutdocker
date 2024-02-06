@@ -1,6 +1,6 @@
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-
+from datetime import datetime
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -82,12 +82,20 @@ def add_question(request):
         return standard_json_response(message='request data must be non-emtpy object', status_code=status.HTTP_400_BAD_REQUEST)
 
     request_body = request.data.get("values")
-
+    request_body["created_by"] = request.user.id
+    request_body["updated_by"] = request.user.id
+    request_body["updated_at"] = datetime.now()
     if not isinstance(request_body, dict) or not request_body:
         return standard_json_response(message='request body must be non-emtpy object', status_code=status.HTTP_400_BAD_REQUEST)
 
     mcq = request_body.get('multiple_options')
+    mcq["created_by"] = request.user.id
+    mcq["updated_by"] = request.user.id
+    mcq["updated_at"] = datetime.now()
     programs = request_body.get('program_test_cases')
+    programs["created_by"] = request.user.id
+    programs["updated_by"] = request.user.id
+    programs["updated_at"] = datetime.now()
 
     if not mcq and not programs:
         return standard_json_response(message='either multiple_options or program_test_cases must be present', status_code=status.HTTP_400_BAD_REQUEST)
@@ -193,14 +201,14 @@ def bulk_questions(request):
 
     if mcq:
         try:
-            validated_mcq_questions = validate_questions(mcq)
+            validated_mcq_questions = validate_questions(request, mcq)
             bulk_create_objects(validated_mcq_questions, mcq, MultipleChoicesAnswerSerializer, MultipleChoicesAnswer)
         except Exception as exc:
             return standard_json_response(message=str(exc), status_code=status.HTTP_400_BAD_REQUEST)
 
     if programs:
         try:
-            validated_programs_questions = validate_questions(programs)
+            validated_programs_questions = validate_questions(request, programs)
             bulk_create_objects(validated_programs_questions, programs, ProgramTestCaseSerializer, ProgramTestCase)
         except Exception as exc:
             return standard_json_response(message=str(exc), status_code=status.HTTP_400_BAD_REQUEST)
@@ -208,7 +216,7 @@ def bulk_questions(request):
     return standard_json_response(message='Questions uploaded successfully', status_code=status.HTTP_201_CREATED)
 
 
-def validate_questions(question_data):
+def validate_questions(request, question_data):
     """
     Validates json data if matching with QuestionSerializer requirement and returns Question model instances
 
@@ -239,6 +247,8 @@ def validate_questions(question_data):
     """
     validated_questions = []
     for obj in question_data:
+        obj["created_by"] = request.user.id
+        obj["updated_by"] = request.user.id
         q_serializer = QuestionSerializer(data=obj)
         if not q_serializer.is_valid():
             raise Exception('question with name, type, diffiulty and langauge is required')

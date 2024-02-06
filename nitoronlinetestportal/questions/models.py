@@ -1,8 +1,11 @@
 from django.db import models
 from datetime import timedelta
 
+from questions.basemodel import BaseModel
+from django.contrib.auth.models import User
 
-class Question(models.Model):
+
+class Question(BaseModel):
     MULTIPLE_CHOICES = 1
     PROGRAMS = 2
 
@@ -26,6 +29,8 @@ class Question(models.Model):
     difficulty = models.IntegerField(default=EASY, choices=DIFFICULTY)
     language = models.CharField(max_length=500, null=True)
     duration = models.DurationField(null=True)
+    created_by = models.ForeignKey(User, related_name="question_created_by", null=True, on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(User, related_name="question_updated_by", null=True, on_delete=models.CASCADE)
 
     @property
     def question_duration(self):
@@ -42,18 +47,22 @@ class Question(models.Model):
         return durations.get((self.type, self.difficulty)).seconds
 
 
-class MultipleChoicesAnswer(models.Model):
+class MultipleChoicesAnswer(BaseModel):
     option1 = models.CharField(max_length=5000, null=True)
     option2 = models.CharField(max_length=5000, null=True)
     option3 = models.CharField(max_length=5000, null=True)
     option4 = models.CharField(max_length=5000, null=True)
     correct_value = models.CharField(max_length=5000, null=True)
     question = models.ForeignKey(Question, related_name='muliple_choice_answers', null=False, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name="choice_created_by", null=True, on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(User, related_name="choice_updated_by", null=True, on_delete=models.CASCADE)
 
 
-class ProgramTestCase(models.Model):
+class ProgramTestCase(BaseModel):
     case1 = models.CharField(max_length=5000, null=True)
     case2 = models.CharField(max_length=5000, null=True)
     case3 = models.CharField(max_length=5000, null=True)
     case4 = models.CharField(max_length=5000, null=True)
     question = models.ForeignKey(Question, related_name='program_test_cases', null=False, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name="program_test_created_by", null=True, on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(User, related_name="program_test_updated_by", null=True, on_delete=models.CASCADE)
