@@ -136,17 +136,6 @@ const CreateTest = (props) => {
                 Generate Link
               </Button>
             </Tooltip>
-            <Tooltip placement="topLeft" title="View Summary">
-              <Button
-                size="small"
-                type="default"
-                onClick={() => {
-                  viewSummary(testRecord)
-                }}
-              >
-                View Summary
-              </Button>
-            </Tooltip>
             <Tooltip
               placement="topLeft"
               title={testRecord.is_active ? 'Deactivate' : 'Activate'}
@@ -246,11 +235,6 @@ const CreateTest = (props) => {
 
   // TODO: Function to go on generate Test link
   const generateTest = (testRecord) => {
-    console.log('testRecord 1', testRecord)
-  }
-
-  // TODO: Function to view summary
-  const viewSummary = (testRecord) => {
     console.log('testRecord 1', testRecord)
   }
 

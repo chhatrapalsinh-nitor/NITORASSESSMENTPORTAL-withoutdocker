@@ -211,7 +211,6 @@ const CreateNewTest = ({
   // Function to add form data to List with Score Weightage
   const handleCreateNewTest = (param) => {
     let values = { ...initialNewTestValues, ...param }
-
     let name = values['name']
     let end_date = values['end_date']
     let weightage = calculateWeightage(values)

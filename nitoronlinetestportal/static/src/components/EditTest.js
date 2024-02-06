@@ -21,6 +21,7 @@ import {
 } from '../Utils/constants'
 import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
 const { Panel } = Collapse
+import moment from 'moment'
 
 const constInitialQuestionsValue = {
   easy_mcq_count: 0,
@@ -239,6 +240,7 @@ const EditTest = ({
                                   <DatePicker
                                     style={{ width: 100 + '%' }}
                                     onChange={onDateChange}
+                                    defaultValue={moment(rec[item.dataIndex])}
                                     disabled
                                   />
                                 ) : item.dataIndex == 'name' ? (
