@@ -15,6 +15,7 @@ class TestsDetails(BaseModel):
     duration = models.DurationField(null=True)
     weightage = models.IntegerField(null=True, blank=True)
     end_date = models.DateTimeField(null=True)
+    add_section = models.JSONField(default=[], max_length=20000)
     created_by = models.ForeignKey(User, related_name="test_detail_created_by", null=True, on_delete=models.CASCADE)
     updated_by = models.ForeignKey(User, related_name="test_detail_updated_by", null=True, on_delete=models.CASCADE)
 

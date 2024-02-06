@@ -106,7 +106,11 @@ def create_update_test(request):
             return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
 
     request.data["duration"] = get_total_duration(request.data["question_details"])
-    tds = TestDetailSerializer(data=request.data, instance=test)
+    test_payload = request.data
+    test_payload['created_by'] = request.user.id
+    test_payload['updated_by'] = request.user.id
+    test_payload['updated_at'] = datetime.now()
+    tds = TestDetailSerializer(data=test_payload, instance=test)
 
     if not tds.is_valid():
         return standard_json_response(message=tds.errors, status_code=status.HTTP_400_BAD_REQUEST)
@@ -381,7 +385,10 @@ def generate_test_link(request):
             get_random_program_testcases(language=language, difficulty=Question.HARD, limit=hard_program_count)
     except Exception as e:
         return standard_json_response(message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
-
+    test_alocation_payload = request.data
+    test_alocation_payload['created_by'] = request.user.id
+    test_alocation_payload['updated_by'] = request.user.id
+    test_alocation_payload['updated_at'] = datetime.now()
     tas = TestAllocationsSerialiazer(data=request.data)
 
     if not tas.is_valid():
@@ -410,6 +417,7 @@ def add_user_test_details(request):
         return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
     
     user_exists = UserTests.objects.filter(email=user_details['email']).last()
+    user_details['updated_at'] = datetime.now()
     user_details = UserTestsSerialiazer(instance = user_exists, data=user_details)
     
     if not user_details.is_valid():
@@ -532,7 +540,8 @@ def save_candidate_answer(request):
 
         if user_test.completed:
             user_test.submission_date = datetime.today()
-            
+        
+        user_test.updated_at = datetime.now()
         user_test.save()
 
     user_details = UserTestsSerialiazer(instance = user_test)
