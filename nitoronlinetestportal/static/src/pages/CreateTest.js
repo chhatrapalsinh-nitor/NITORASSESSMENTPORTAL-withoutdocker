@@ -127,7 +127,8 @@ const CreateTest = (props) => {
             </Tooltip>
             <Tooltip placement="topLeft" title="Generate Link">
               <Button
-                type="primary"
+                size="small"
+                type="default"
                 onClick={() => {
                   generateTest(testRecord)
                 }}
@@ -137,7 +138,8 @@ const CreateTest = (props) => {
             </Tooltip>
             <Tooltip placement="topLeft" title="View Summary">
               <Button
-                type="primary"
+                size="small"
+                type="default"
                 onClick={() => {
                   viewSummary(testRecord)
                 }}
@@ -223,6 +225,8 @@ const CreateTest = (props) => {
 
   // Function to open Edit existing Test Model
   const openEditModal = (testRecord) => {
+    console.log('testRecord', testRecord)
+    return
     let form_val = {
       ...testRecord,
       ...testRecord.question_details,
