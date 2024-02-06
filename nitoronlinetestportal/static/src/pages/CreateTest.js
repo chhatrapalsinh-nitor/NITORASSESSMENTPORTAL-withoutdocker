@@ -225,8 +225,6 @@ const CreateTest = (props) => {
 
   // Function to open Edit existing Test Model
   const openEditModal = (testRecord) => {
-    console.log('testRecord', testRecord)
-    return
     let form_val = {
       ...testRecord,
       ...testRecord.question_details,
