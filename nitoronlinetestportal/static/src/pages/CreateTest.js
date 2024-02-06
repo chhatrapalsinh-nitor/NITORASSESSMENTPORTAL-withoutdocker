@@ -14,42 +14,11 @@ import {
 import { triggerFetchData } from '../Utils/Hooks/useFetchAPI'
 import { useFetch } from '../Utils/Hooks/useFetchAPI'
 import { EditFilled, EyeFilled } from '@ant-design/icons'
-import AddTest from '../components/AddTest'
+import CreateNewTest from '../components/CreateNewTest'
+import EditTest from '../components/EditTest'
 import PropTypes from 'prop-types'
 import '../styles/create-test.css'
-/**
- * 
- *  {
-      "name" : "WellSky Backend Test",
-      "total_questions" : 25,
-      "question_details": [
-          {
-            "python": {
-              "mcq_count": 5,
-              "easy_program_count": 1,
-              "medium_program_count": 2,
-              "hard_program_count": 3
-            }
-          },
-          {
-            "javascript": {
-              "mcq_count": 5,
-              "easy_program_count": 1,
-              "medium_program_count": 2,
-              "hard_program_count": 1
-            }
-          },
-          {
-            "graphql": {
-              "mcq_count": 5,
-              "easy_program_count": 0,
-              "medium_program_count": 0,
-              "hard_program_count": 0
-            }
-          }
-      ]
-    }
- */
+
 const { Panel } = Collapse
 const CreateTest = (props) => {
   const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false)
@@ -87,7 +56,6 @@ const CreateTest = (props) => {
       filters: filter_test(),
       onFilter: (value, testRecord) => testRecord.name.indexOf(value) === 0,
       filterMultiple: true,
-      // // render: (text) => <p>{text}</p>,
       render: (text, testRecord) => (
         <>
           <a
@@ -101,12 +69,26 @@ const CreateTest = (props) => {
       ),
     },
     {
+      title: 'Languages',
+      render: (_, testRecord) => (
+        <>
+          {
+            <p>
+              {testRecord.question_details.map((ques, index) => {
+                return (index ? ',' : '') + ques.language
+              })}
+            </p>
+          }
+        </>
+      ),
+    },
+    {
       title: 'Total Questions',
       dataIndex: 'total_questions',
       key: 'total_questions',
     },
     {
-      title: 'Type',
+      title: 'Status',
       dataIndex: 'is_active',
       key: 'is_active',
       render: (_, testRecord) => (
@@ -118,6 +100,11 @@ const CreateTest = (props) => {
           )}
         </>
       ),
+    },
+    {
+      title: 'End Date',
+      dataIndex: 'end_date',
+      key: 'end_date',
     },
     {
       title: 'Action',
@@ -137,6 +124,26 @@ const CreateTest = (props) => {
                   openEditModal(testRecord)
                 }}
               />
+            </Tooltip>
+            <Tooltip placement="topLeft" title="Generate Link">
+              <Button
+                type="primary"
+                onClick={() => {
+                  generateTest(testRecord)
+                }}
+              >
+                Generate Link
+              </Button>
+            </Tooltip>
+            <Tooltip placement="topLeft" title="View Summary">
+              <Button
+                type="primary"
+                onClick={() => {
+                  viewSummary(testRecord)
+                }}
+              >
+                View Summary
+              </Button>
             </Tooltip>
             <Tooltip
               placement="topLeft"
@@ -228,6 +235,23 @@ const CreateTest = (props) => {
     ])
   }
 
+  // Function to open Edit existing Test Model
+  const closeEditModal = () => {
+    setIsEditModalOpen(false)
+    setTestRecord(null)
+    setDataList([])
+  }
+
+  // TODO: Function to go on generate Test link
+  const generateTest = (testRecord) => {
+    console.log('testRecord 1', testRecord)
+  }
+
+  // TODO: Function to view summary
+  const viewSummary = (testRecord) => {
+    console.log('testRecord 1', testRecord)
+  }
+
   return (
     <>
       {/* Mutate Mode */}
@@ -260,10 +284,9 @@ const CreateTest = (props) => {
         </Modal>
 
         {/* Add New Test Modal */}
-        {isAddTestModalOpen || isEditTestModalOpen ? (
-          <AddTest
+        {isAddTestModalOpen && (
+          <CreateNewTest
             isAddTestModalOpen={isAddTestModalOpen}
-            isEditTestModalOpen={isEditTestModalOpen}
             fetchData={fetchData}
             testRecord={testRecord}
             dataList={dataList}
@@ -271,7 +294,19 @@ const CreateTest = (props) => {
             closeAddNewTestModal={closeAddNewTestModal}
             openDetailModal={openDetailModal}
           />
-        ) : null}
+        )}
+        {/* Edit Test Modal */}
+        {isEditTestModalOpen && (
+          <EditTest
+            fetchData={fetchData}
+            testRecord={testRecord}
+            dataList={dataList}
+            setDataList={setDataList}
+            isEditTestModalOpen={isEditTestModalOpen}
+            closeEditModal={closeEditModal}
+            openDetailModal={openDetailModal}
+          />
+        )}
       </Layout.Content>
 
       {/* View Test Modal */}

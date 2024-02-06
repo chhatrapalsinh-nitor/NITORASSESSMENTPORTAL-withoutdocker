@@ -27,13 +27,7 @@ const GenerateTest = () => {
         ]
       : [],
   )
-  const [isCompleted, setIsCompleted] = useState(
-    'user_details' in localStorage
-      ? JSON.parse(localStorage.getItem('user_details'))['completed']
-      : 'user_score_details' in localStorage
-        ? JSON.parse(localStorage.getItem('user_score_details'))['textFinished']
-        : false,
-  )
+  const [isCompleted, setIsCompleted] = useState(false)
   const path = search.pathname.split('/')
   const [counter, setCounter] = useState(
     'user_details' in localStorage
@@ -65,14 +59,14 @@ const GenerateTest = () => {
   useEffect(() => {
     const pageSwitchCount = parseInt(localStorage.getItem('screen_change')) || 0
     if (pageVisibilityStatus) {
-    localStorage.setItem('screen_change', pageSwitchCount + 1)
-    if (pageSwitchCount >= 3) {
-    alert(`Your exam link has expired due to switching browser tabs frequently.`)
-    setIsCompleted(true)
-    } else {
-    alert(
-    `Warning ${pageSwitchCount + 1}: You are not allowed to leave the page. Your progress may be lost.`,
-    )
+      localStorage.setItem('screen_change', pageSwitchCount + 1)
+      if (pageSwitchCount >= 3) {
+        alert(`Your exam link has expired due to switching browser tabs frequently.`)
+        setIsCompleted(true)
+      } else {
+        alert(
+          `Warning ${pageSwitchCount + 1}: You are not allowed to leave the page. Your progress may be lost.`,
+        )
       }
     }
   }, [pageVisibilityStatus])
@@ -125,8 +119,8 @@ const GenerateTest = () => {
     }
   }, [''])
 
-   // Menu Item setting
-   useEffect(() => {
+  // Menu Item setting
+  useEffect(() => {
     if ('user_details' in localStorage) {
       let data = JSON.parse(localStorage.getItem('user_details'))[
         'generated_question'
@@ -193,7 +187,6 @@ const GenerateTest = () => {
       setIsLinkExpired(linkExpired)
     }
   }, [])
-
 
   function getItemItem(label, key, children) {
     return {
@@ -342,10 +335,7 @@ const GenerateTest = () => {
     <>
       <WebCam />
       <div className="quiz-container">
-        {questions[language] &&
-        !showResult &&
-        !isCompleted &&
-        !isLinkExpired['expired'] ? (
+        {questions[language] && !showResult ? (
           <>
             <div
               style={{

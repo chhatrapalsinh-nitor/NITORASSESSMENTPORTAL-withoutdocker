@@ -22,7 +22,6 @@ const TestCodeEditor = () => {
   ])
 
   const onSelectChange = (sl) => {
-    // console.log("selected language:", sl);
     const selectedLanguage = languageOptions.filter(
       (item) => item.value.toLowerCase() == sl.toLowerCase(),
     )
@@ -30,7 +29,6 @@ const TestCodeEditor = () => {
   }
 
   const onChange = (action, data) => {
-    // console.log(action, data);
     switch (action) {
       case 'code': {
         setCode(data)

@@ -249,7 +249,7 @@ const GenerateLink = (props) => {
                   ) : item.dataIndex == 'test' ? (
                     <Select
                       showSearch
-                      placeholder="Select a person"
+                      placeholder="Select a test"
                       optionFilterProp="children"
                       filterOption={(input, option) =>
                         (option?.label ?? '')
