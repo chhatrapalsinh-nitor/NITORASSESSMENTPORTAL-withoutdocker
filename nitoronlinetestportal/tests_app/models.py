@@ -26,6 +26,7 @@ class TestAllocations(BaseModel):
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField()
     test = models.ForeignKey(TestsDetails, related_name='test_allocations', null=False, on_delete=models.CASCADE)
+    email_list = models.TextField(null=True)
     created_by = models.ForeignKey(User, related_name="test_allocations_created_by", null=True, on_delete=models.CASCADE)
     updated_by = models.ForeignKey(User, related_name="test_allocations_updated_by", null=True, on_delete=models.CASCADE)
 

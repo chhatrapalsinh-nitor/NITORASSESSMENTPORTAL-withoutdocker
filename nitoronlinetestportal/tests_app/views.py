@@ -55,7 +55,7 @@ from questions.serializers import (MultipleChoicesAnswerSerializer,
                                    ProgramTestCaseSerializer)
 from tests_app.models import TestAllocations, TestsDetails, UserTests
 from tests_app.serializers import (TestAllocationsSerialiazer,
-                                   TestDetailSerializer, UserTestsSerialiazer)
+                                   TestDetailSerializer, TestSummarySerialiazer, UserTestsSerialiazer)
 from utils.response_handlers import standard_json_response
 from datetime import datetime
 from .utils import get_total_duration
@@ -213,6 +213,35 @@ def get_test_list(request):
     tests_details_list = TestsDetails.objects.all().order_by('-is_active')
     test_details_json = TestDetailSerializer(tests_details_list, many=True).data
     return standard_json_response(data=test_details_json)
+
+
+@api_view(('GET',))
+@permission_classes((IsAuthenticated, ))
+def test_summary(request, test_id):
+    print("test_id", test_id)
+    summary = {}
+    test_link = TestAllocations.objects.filter(test=test_id).last()
+
+    if test_link and test_link.email_list:
+        summary["name"] = test_link.name
+        assignee_list = test_link.email_list.split(",")
+        print("assignee_list", assignee_list)
+        attempted_test = test_link.user_tests.filter(email__in = assignee_list)
+        print("attempted_test.values('email', flat=True)", attempted_test.values('email', flat=True))
+        remaining_users = [assignee for assignee in assignee_list if assignee not in attempted_test.values('email', flat=True)]
+        print(remaining_users)
+        print(attempted_test)
+        summary_list = TestSummarySerialiazer(attempted_test, many=True).data
+        summary["summary"] = summary_list
+        for assignee in remaining_users:
+            summary["summary"].append({
+                "email": assignee,
+                "correct_answers": 0,
+                "completed": False,
+                "score": 0.0
+            })
+
+    return standard_json_response(data=summary)
 
 
 @api_view(('POST',))

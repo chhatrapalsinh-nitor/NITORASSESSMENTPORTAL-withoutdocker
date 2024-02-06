@@ -27,5 +27,6 @@ urlpatterns = [
     path('get_test_link/', get_test_link),
     path('add_user_test_details/', add_user_test_details),
     path('save_candidate_answer/', save_candidate_answer),
-    path('upload_captured_image/', upload_captured_image)
+    path('upload_captured_image/', upload_captured_image),
+    path('test_summary/<test_id>/', test_summary)
 ]
