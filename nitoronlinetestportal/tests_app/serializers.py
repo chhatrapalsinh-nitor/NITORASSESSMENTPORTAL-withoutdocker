@@ -112,4 +112,4 @@ class UserTestsSerialiazer(serializers.ModelSerializer):
 class TestSummarySerialiazer(serializers.ModelSerializer):
     class Meta:
         model = UserTests
-        fields = ('id', 'first_name', 'last_name', 'email', 'correct_answers', 'completed', 'score')
+        fields = ('email', 'correct_answers', 'completed', 'score')

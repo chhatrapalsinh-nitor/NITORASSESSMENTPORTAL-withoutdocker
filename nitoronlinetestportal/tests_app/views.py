@@ -225,12 +225,8 @@ def test_summary(request, test_id):
     if test_link and test_link.email_list:
         summary["name"] = test_link.name
         assignee_list = test_link.email_list.split(",")
-        print("assignee_list", assignee_list)
         attempted_test = test_link.user_tests.filter(email__in = assignee_list)
-        print("attempted_test.values('email', flat=True)", attempted_test.values('email', flat=True))
-        remaining_users = [assignee for assignee in assignee_list if assignee not in attempted_test.values('email', flat=True)]
-        print(remaining_users)
-        print(attempted_test)
+        remaining_users = [assignee for assignee in assignee_list if assignee not in attempted_test.values_list('email', flat=True)]
         summary_list = TestSummarySerialiazer(attempted_test, many=True).data
         summary["summary"] = summary_list
         for assignee in remaining_users:
