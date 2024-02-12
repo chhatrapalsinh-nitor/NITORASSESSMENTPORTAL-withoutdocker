@@ -192,7 +192,7 @@ const GenerateLink = (props) => {
   const submitGeneratedLinkForm = async (values) => {
     let end_date = endDate + ' 00:00:00'
     values.end_date = end_date
-    values.email_list = tags
+    values.email_list = tags.toString()
     triggerFetchData('generate_test_link/', values)
       .then((data) => {
         message.success('Test Link Generated')
