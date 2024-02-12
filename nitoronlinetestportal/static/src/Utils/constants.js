@@ -142,6 +142,12 @@ const TestLinkTable = [
     dataIndex: 'test',
     key: 'test',
   },
+
+  {
+    title: 'Email List',
+    dataIndex: 'email_list',
+    key: 'email_list',
+  },
 ]
 
 const userFormFields = [

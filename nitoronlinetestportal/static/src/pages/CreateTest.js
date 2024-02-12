@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { withRouter } from 'react-router-dom'
 import {
   Input,
   Layout,
@@ -20,7 +21,7 @@ import PropTypes from 'prop-types'
 import '../styles/create-test.css'
 
 const { Panel } = Collapse
-const CreateTest = (props) => {
+const CreateTest = ({ setSelectedKey, history }) => {
   const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false)
   const [isEditTestModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -33,7 +34,7 @@ const CreateTest = (props) => {
 
   // trigger on component mount
   useEffect(() => {
-    props.setSelectedKey('create-test')
+    setSelectedKey('create-test')
   }, [])
 
   const filter_test = () => {
@@ -235,7 +236,11 @@ const CreateTest = (props) => {
 
   // TODO: Function to go on generate Test link
   const generateTest = (testRecord) => {
-    console.log('testRecord 1', testRecord)
+    testRecord['test'] = testRecord.name + '_'
+    history.push({
+      pathname: '/generate-link',
+      state: { testRecord: testRecord, isModalOpen: true },
+    })
   }
 
   return (
@@ -335,4 +340,4 @@ CreateTest.defaultProps = {
   },
 }
 
-export default CreateTest
+export default withRouter(CreateTest)
