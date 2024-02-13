@@ -257,7 +257,7 @@ const EditTest = ({
                       ))}
                     </Row>
                     {/* MCQ Fields */}
-                    {rec.add_sections.includes('Add_MCQs') && (
+                    {rec?.add_sections?.includes('Add_MCQs') && (
                       <Row justify="start">
                         <Col span={24}>
                           <h4>MCQ Count</h4>
@@ -296,7 +296,7 @@ const EditTest = ({
                       </Row>
                     )}
                     {/* Program Fields */}
-                    {rec.add_sections.includes('Add_Programs') && (
+                    {rec?.add_sections?.includes('Add_Programs') && (
                       <Row justify="start">
                         <Col span={24}>
                           <h4>Program Count</h4>

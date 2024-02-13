@@ -392,7 +392,7 @@ def generate_test_link(request):
     tas = TestAllocationsSerialiazer(data=request.data)
 
     if not tas.is_valid():
-        return standard_json_response(message=tas.errors, status_code=status.HTTP_400_BAD_REQUEST)
+        return standard_json_response(message=tas.errors["non_field_errors"], status_code=status.HTTP_400_BAD_REQUEST)
 
     tas.save()
 

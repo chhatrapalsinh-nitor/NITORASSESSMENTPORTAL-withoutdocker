@@ -4,19 +4,22 @@ import { Input, Tag } from 'antd'
 const MultiTagInput = (props) => {
   const [inputValue, setInputValue] = useState('')
   const [tags, setTags] = useState(props.tags)
-
+  const [tagsError, setTagsError] = useState(false)
   const handleInputChange = (e) => {
     setInputValue(e.target.value)
   }
-
   const handleInputConfirm = () => {
     if (inputValue && !tags.includes(inputValue)) {
-      setTags([...tags, inputValue])
-      props.setTags([...tags, inputValue])
-      setInputValue('')
+      if (tags.length < 25) {
+        setTags([...tags, inputValue])
+        props.setTags([...tags, inputValue])
+        setInputValue('')
+        setTagsError(false)
+      } else {
+        setTagsError(true)
+      }
     }
   }
-
   const handleTagClose = (removedTag) => {
     const updatedTags = tags.filter((tag) => tag !== removedTag)
     setTags(updatedTags)
@@ -39,6 +42,11 @@ const MultiTagInput = (props) => {
           </Tag>
         ))}
       </div>
+      {tagsError ? (
+        <p style={{ color: 'red' }}>You can not enter more than 25 emails...!</p>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }
