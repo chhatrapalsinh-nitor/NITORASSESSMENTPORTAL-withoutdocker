@@ -110,3 +110,9 @@ class UserTestsSerialiazer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         UserTests.objects.filter(id=instance.pk).update(**validated_data)
         return instance
+
+
+class TestSummarySerialiazer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTests
+        fields = ('email', 'correct_answers', 'completed', 'score')
