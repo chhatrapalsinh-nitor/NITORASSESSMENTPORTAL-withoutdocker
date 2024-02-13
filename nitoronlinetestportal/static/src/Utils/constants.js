@@ -144,6 +144,12 @@ const TestLinkTable = [
     dataIndex: 'test',
     key: 'test',
   },
+
+  {
+    title: 'Email List',
+    dataIndex: 'email_list',
+    key: 'email_list',
+  },
 ]
 
 const userFormFields = [
@@ -177,14 +183,19 @@ const CreateTestForm = [
     sorter: (a, b) => a.language - b.language,
   },
   {
+    title: 'End Date',
+    dataIndex: 'end_date',
+    key: 'end_date',
+  },
+  {
+    title: 'Add Sections',
+    dataIndex: 'add_sections',
+    key: 'add_sections',
+  },
+  {
     title: 'Easy MCQ Count',
     dataIndex: 'easy_mcq_count',
     key: 'easy_mcq_count',
-  },
-  {
-    title: 'Easy Programs',
-    dataIndex: 'easy_program_count',
-    key: 'easy_program_count',
   },
   {
     title: 'Medium MCQ Count',
@@ -192,21 +203,110 @@ const CreateTestForm = [
     key: 'medium_mcq_count',
   },
   {
-    title: 'Medium Program',
-    dataIndex: 'medium_program_count',
-    key: 'medium_program_count',
-  },
-  {
     title: 'Hard MCQ Count',
     dataIndex: 'hard_mcq_count',
     key: 'hard_mcq_count',
   },
   {
+    title: 'Easy Programs',
+    dataIndex: 'easy_program_count',
+    key: 'easy_program_count',
+  },
+
+  {
+    title: 'Medium Program',
+    dataIndex: 'medium_program_count',
+    key: 'medium_program_count',
+  },
+
+  {
     title: 'Hard Program',
     dataIndex: 'hard_program_count',
     key: 'hard_program_count',
   },
+  {
+    title: 'Long Summary',
+    dataIndex: 'long_summary_count',
+    key: 'long_summary_count',
+  },
 ]
+const CreateTestForm_1 = [
+  {
+    title: 'Test Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Language Name',
+    dataIndex: 'language',
+    key: 'language',
+    sorter: (a, b) => a.language - b.language,
+  },
+  {
+    title: 'End Date',
+    dataIndex: 'end_date',
+    key: 'end_date',
+  },
+  {
+    title: 'Sections',
+    dataIndex: 'add_sections',
+    key: 'add_sections',
+  },
+]
+const CreateTestForm_2 = [
+  {
+    title: 'Easy',
+    dataIndex: 'easy_mcq_count',
+    key: 'easy_mcq_count',
+  },
+  {
+    title: 'Medium',
+    dataIndex: 'medium_mcq_count',
+    key: 'medium_mcq_count',
+  },
+  {
+    title: 'Hard',
+    dataIndex: 'hard_mcq_count',
+    key: 'hard_mcq_count',
+  },
+]
+const CreateTestForm_3 = [
+  {
+    title: 'Easy',
+    dataIndex: 'easy_program_count',
+    key: 'easy_program_count',
+  },
+
+  {
+    title: 'Medium',
+    dataIndex: 'medium_program_count',
+    key: 'medium_program_count',
+  },
+
+  {
+    title: 'Hard',
+    dataIndex: 'hard_program_count',
+    key: 'hard_program_count',
+  },
+]
+
+const testSectionOption = [
+  { id: 1, label: 'Add MCQs', name: 'Add MCQs', value: 'Add_MCQs' },
+  { id: 2, label: 'Add Programs', name: 'Add Programs', value: 'Add_Programs' },
+]
+
+const initialNewTestValues = {
+  add_sections: [],
+  easy_mcq_count: '0',
+  easy_program_count: '0',
+  end_date: '',
+  hard_mcq_count: '0',
+  hard_program_count: '0',
+  language: '',
+  medium_mcq_count: '0',
+  medium_program_count: '0',
+  name: '',
+}
 
 export {
   baseURL,
@@ -217,4 +317,9 @@ export {
   TestLinkTable,
   userFormFields,
   CreateTestForm,
+  CreateTestForm_1,
+  CreateTestForm_2,
+  CreateTestForm_3,
+  initialNewTestValues,
+  testSectionOption,
 }

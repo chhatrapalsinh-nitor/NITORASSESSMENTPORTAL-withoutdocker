@@ -78,7 +78,10 @@ class TestAllocationsSerialiazer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['start_date'] >= data['end_date']:
-            raise serializers.ValidationError('end_date must be in future.')
+            raise serializers.ValidationError('End date must be in future.')
+        test_end_date = data['test'].end_date
+        if data['end_date'] >= test_end_date :
+            raise serializers.ValidationError("End date can not be grater then orignal test's end date.")
         return super().validate(data)
 
     def create(self, validated_data):
@@ -107,3 +110,9 @@ class UserTestsSerialiazer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         UserTests.objects.filter(id=instance.pk).update(**validated_data)
         return instance
+
+
+class TestSummarySerialiazer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTests
+        fields = ('email', 'correct_answers', 'completed', 'score')

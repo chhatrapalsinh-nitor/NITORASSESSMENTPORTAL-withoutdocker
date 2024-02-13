@@ -3,7 +3,17 @@
 .quiz-container {
   background: #ffffff;
   border-radius: 4px;
-  padding: 30px 60px;
+}
+
+.quiz-container .left-menu-bar {
+  width: 140px;
+  height: calc(100vh - 64px);
+  /* background: #001529; */
+}
+
+.quiz-container .quiz-questions-box {
+  width: calc(100% - 140px);
+  padding: 0px 30px;
 }
 
 .quiz-container .active-question-no {
@@ -24,11 +34,11 @@
   margin: 0;
 }
 
-.quiz-container ul {
+.quiz-container .container ul {
   margin-top: 20px;
 }
 
-.quiz-container ul li {
+.quiz-container .container ul li {
   text-decoration: none;
   list-style: none;
   color: #2d264b;
@@ -41,7 +51,7 @@
   cursor: pointer;
 }
 
-.quiz-container ul .selected-answer {
+.quiz-container .container ul .selected-answer {
   background: #c8cfe6;
   border: 1px solid #1f3c85;
 }
@@ -175,4 +185,11 @@ div.am-pm div p {
 /*CLASS THAT CHANGES COLOR OF TEXT TO APPEAR LIKE ITS "ON"*/
 .light-on {
   color: #ffffff;
+}
+
+.ant-menu-submenu
+  .ant-menu-submenu-inline
+  .ant-menu-submenu-open
+  .ant-menu-submenu-selected {
+  background-color: red;
 }

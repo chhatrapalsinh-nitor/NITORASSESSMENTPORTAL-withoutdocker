@@ -51,7 +51,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from tests_app.models import TestAllocations, TestsDetails, UserTests
 from tests_app.serializers import (TestAllocationsSerialiazer,
-                                   TestDetailSerializer, UserTestsSerialiazer)
+                                   TestDetailSerializer, TestSummarySerialiazer, UserTestsSerialiazer)
 from utils.response_handlers import standard_json_response
 from datetime import datetime
 from .utils import get_total_duration, validate_single_question_details
@@ -102,7 +102,11 @@ def create_update_test(request):
             return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
 
     request.data["duration"] = get_total_duration(request.data["question_details"])
-    tds = TestDetailSerializer(data=request.data, instance=test)
+    test_payload = request.data
+    test_payload['created_by'] = request.user.id
+    test_payload['updated_by'] = request.user.id
+    test_payload['updated_at'] = datetime.now()
+    tds = TestDetailSerializer(data=test_payload, instance=test)
 
     if not tds.is_valid():
         return standard_json_response(message=tds.errors, status_code=status.HTTP_400_BAD_REQUEST)
@@ -194,6 +198,31 @@ def get_test_list(request):
     tests_details_list = TestsDetails.objects.all().order_by('-is_active')
     test_details_json = TestDetailSerializer(tests_details_list, many=True).data
     return standard_json_response(data=test_details_json)
+
+
+@api_view(('GET',))
+@permission_classes((IsAuthenticated, ))
+def test_summary(request, test_id):
+    print("test_id", test_id)
+    summary = {}
+    test_link = TestAllocations.objects.filter(test=test_id).last()
+
+    if test_link and test_link.email_list:
+        summary["name"] = test_link.name
+        assignee_list = test_link.email_list.split(",")
+        attempted_test = test_link.user_tests.filter(email__in = assignee_list)
+        remaining_users = [assignee for assignee in assignee_list if assignee not in attempted_test.values_list('email', flat=True)]
+        summary_list = TestSummarySerialiazer(attempted_test, many=True).data
+        summary["summary"] = summary_list
+        for assignee in remaining_users:
+            summary["summary"].append({
+                "email": assignee,
+                "correct_answers": 0,
+                "completed": False,
+                "score": 0.0
+            })
+
+    return standard_json_response(data=summary)
 
 
 @api_view(('POST',))
@@ -301,11 +330,14 @@ def generate_test_link(request):
             validate_single_question_details(details)
     except Exception as e:
         return standard_json_response(message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
-
+    test_alocation_payload = request.data
+    test_alocation_payload['created_by'] = request.user.id
+    test_alocation_payload['updated_by'] = request.user.id
+    test_alocation_payload['updated_at'] = datetime.now()
     tas = TestAllocationsSerialiazer(data=request.data)
 
     if not tas.is_valid():
-        return standard_json_response(message=tas.errors, status_code=status.HTTP_400_BAD_REQUEST)
+        return standard_json_response(message=tas.errors["non_field_errors"], status_code=status.HTTP_400_BAD_REQUEST)
 
     tas.save()
 
@@ -330,6 +362,7 @@ def add_user_test_details(request):
         return standard_json_response(message='Test does not exist', status_code=status.HTTP_404_NOT_FOUND)
     
     user_exists = UserTests.objects.filter(email=user_details['email']).last()
+    user_details['updated_at'] = datetime.now()
     user_details = UserTestsSerialiazer(instance = user_exists, data=user_details)
     
     if not user_details.is_valid():
@@ -452,7 +485,8 @@ def save_candidate_answer(request):
 
         if user_test.completed:
             user_test.submission_date = datetime.today()
-            
+        
+        user_test.updated_at = datetime.now()
         user_test.save()
 
     user_details = UserTestsSerialiazer(instance = user_test)

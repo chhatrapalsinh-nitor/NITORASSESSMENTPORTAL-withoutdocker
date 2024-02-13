@@ -29,7 +29,7 @@ const Question = (props) => {
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const [lang, setLang] = useState(['python'])
+  const [lang, setLang] = useState([])
 
   const [record, setRecord] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -161,13 +161,11 @@ const Question = (props) => {
   ]
 
   const showDeletelModal = (record) => {
-    // console.log("SHOW DETAIL", { record })
     setRecord(record)
     setIsModalOpen(record)
   }
 
   const showEditlModal = (record) => {
-    // console.log("SHOW DETAIL---->", { record })
     setRecord(record)
     setIsEditModalOpen(record)
     triggerFetchData(`/question_details/${record.id}/${record.type}/`, [], 'GET')
@@ -186,7 +184,6 @@ const Question = (props) => {
   const handleOk = () => {
     triggerFetchData('delete_question/', { id: record.id }, 'DELETE')
       .then((data) => {
-        // console.log("RESULT",data)
         message.success(data.message)
         fetchData()
       })
@@ -203,6 +200,8 @@ const Question = (props) => {
   const onChange = (pagination, filters, sorter, extra) => {
     if (filters.language) {
       setLang(filters.language)
+    } else {
+      setLang([])
     }
   }
 
@@ -273,7 +272,6 @@ const Question = (props) => {
             beforeUpload={(file) => {
               const excelObj = readExcel(file)
               excelObj.then((data) => {
-                console.log('NEW UPLOAD DATA', data)
                 triggerFetchData('bulk_questions/', data).then((data) => fetchData())
               })
               return false

@@ -311,10 +311,8 @@ const AddTest = ({
                       {item.dataIndex == 'language' ? (
                         <Select
                           showSearch
-                          placeholder="Select a person"
+                          placeholder="Select a language"
                           optionFilterProp="children"
-                          // onChange={onChange}
-                          // onSearch={onSearch}
                           filterOption={(input, option) =>
                             (option?.label ?? '')
                               .toLowerCase()
@@ -454,7 +452,7 @@ const AddTest = ({
                                   {item.dataIndex == 'language' ? (
                                     <Select
                                       showSearch
-                                      placeholder="Select a person"
+                                      placeholder="Select a language"
                                       optionFilterProp="children"
                                       defaultValue={rec[item.dataIndex]}
                                       filterOption={(input, option) =>

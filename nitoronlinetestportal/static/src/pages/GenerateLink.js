@@ -19,47 +19,88 @@ import { baseURL, TestLinkTable } from '../Utils/constants'
 import openLinkSvg from '../components/OpenLink'
 import Icon from '@ant-design/icons'
 import PropTypes from 'prop-types'
+import MultiTagInput from '../components/MultiTagInput'
+import { useLocation } from 'react-router-dom'
+import moment from 'moment'
 
 const { Panel } = Collapse
 
 const OpenLinkIcon = (props) => <Icon component={openLinkSvg} {...props} />
+
+/* 
+  This components represent all the generated test link in table formate
+  Also, we can create new test link with the help of this component
+*/
 const GenerateLink = (props) => {
   let filter_test_data = []
-  let filter_testlink_data = []
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  let filter_test_link_data = []
+  const location = useLocation()
+  const [isModalOpen, setIsModalOpen] = useState(
+    location?.state?.isModalOpen == undefined ? false : location?.state?.isModalOpen,
+  )
+  const [testRecord, setTestRecord] = useState(
+    location?.state?.testRecord == undefined ? {} : location?.state?.testRecord,
+  )
   const [form] = Form.useForm()
-  const [endDate, setEndDate] = useState()
+  var formattedDate = testRecord?.end_date
+    ? moment(testRecord.end_date).format('YYYY-MM-DD')
+    : null
+  const [endDate, setEndDate] = useState(formattedDate)
   const [testList, setTestList] = useState()
   const [rowRecord, setRowRecord] = useState(false)
   const [record, setRecord] = useState(null)
-  const [showNotEnoughQuesError, setShowNotEnoughQuesError] = useState(false)
-  const [showNotEnoughQuesErrorMessage, setShowNotEnoughQuesErrorMessage] =
-    useState('')
+  const [tags, setTags] = useState([])
+  const [showGenerateTestError, setShowGenerateTestError] = useState(null)
 
   const { isLoading, serverError, apiData, fetchData } = useFetch('get_test_link')
 
-  // trigger on component mount
+  // Trigger on component mount for setting the header tab
   useEffect(() => {
     props.setSelectedKey('generate-link')
+    getTestList()
   }, [])
 
-  const filter_testlink = () => {
+  // Get all the test details to show in select options
+  const getTestList = () => {
+    triggerFetchData('get_test_list/', {}, 'GET')
+      .then((data) => {
+        setTestList(data.data)
+      })
+      .catch((reason) => message.error(reason))
+  }
+
+  if (testList) {
+    testList.map((data, index) => {
+      if (!filter_test_data.some((item) => data.name === item.value)) {
+        filter_test_data.push({ label: data.name, value: data.id })
+      }
+    })
+  }
+
+  // Function to filter the generated test link table
+  const filterTestLink = () => {
     if (apiData) {
       apiData.data?.map((data, index) => {
-        if (!filter_testlink_data.some((item) => data.name === item.name)) {
-          filter_testlink_data.push({ value: data.name, text: data.name })
+        if (!filter_test_link_data.some((item) => data.name === item.name)) {
+          filter_test_link_data.push({ value: data.name, text: data.name })
         }
       })
     }
-    return filter_testlink_data
+    return filter_test_link_data
   }
 
+  // Function to go on screen test page
+  const goToScreeningTest = (record, history) => {
+    window.open(`/#/screening/user-details/${record.test}/${record.key}`, '_blank')
+  }
+
+  // Tables column
   const list_columns = [
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filters: filter_testlink(),
+      filters: filterTestLink(),
       onFilter: (value, record) => record.name.indexOf(value) === 0,
       filterSearch: true,
       sorter: (a, b) => a.name.length - b.name.length,
@@ -108,7 +149,7 @@ const GenerateLink = (props) => {
                 style={{
                   fontSize: '32px',
                 }}
-                onClick={() => routeChange(record)}
+                onClick={() => goToScreeningTest(record)}
               />
             </Tooltip>
           </Space>
@@ -117,97 +158,74 @@ const GenerateLink = (props) => {
     },
   ]
 
-  const showDetailModal = (record) => {
-    setRecord(record)
-    setRowRecord(true)
-  }
-
-  const routeChange = (record, history) => {
-    window.open(`/#/screening/user-details/${record.test}/${record.key}`, '_blank')
-  }
-
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
-  const handleCancel = () => {
-    setIsModalOpen(false)
-    setRowRecord(null)
-  }
-  const onFinish = async (values) => {
-    let end_date = endDate + ' 00:00:00'
-    values.end_date = end_date
-    triggerFetchData('generate_test_link/', values)
-      .then((data) => {
-        message.success('Test Link Generated')
-        setIsModalOpen(false)
-        fetchData()
-        setShowNotEnoughQuesErrorMessage('')
-        setShowNotEnoughQuesError(false)
-      })
-      .catch((reason) => {
-        setShowNotEnoughQuesErrorMessage(reason && reason.error && reason.message)
-        setShowNotEnoughQuesError(reason && reason.error)
-        message.error(reason)
-      })
-  }
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo)
-  }
-
-  const onChange = (pagination, filters, sorter, extra) => {
+  const onTableChange = (pagination, filters, sorter, extra) => {
     console.log('value:', pagination, filters, sorter, extra)
-  }
-
-  const onDateChange = (date, dateString) => {
-    console.log(date.$d, dateString)
-    setEndDate(dateString)
-  }
-
-  const onSearch = (value) => {
-    console.log('search:', value)
-  }
-
-  const getTestList = () => {
-    triggerFetchData('get_test_list/', {}, 'GET')
-      .then((data) => {
-        setTestList(data.data)
-      })
-      .catch((reason) => message.error(reason))
-  }
-
-  useEffect(() => {
-    console.log('executed only once!')
-    getTestList()
-  }, [''])
-
-  if (testList) {
-    testList.map((data, index) => {
-      if (!filter_test_data.some((item) => data.name === item.value)) {
-        filter_test_data.push({ label: data.name, value: data.id })
-      }
-    })
   }
 
   const handleOk = (values) => {
     setRowRecord(null)
   }
 
+  // Handle Date Change
+  const onDateChange = (date, dateString) => {
+    setEndDate(dateString)
+  }
+
+  // Function to show details view
+  const showDetailModal = (record) => {
+    setRecord(record)
+    setRowRecord(true)
+  }
+
+  // Function to open form
+  const showGeneratedTestLinkModal = () => {
+    setIsModalOpen(true)
+  }
+
+  // Function to close form
+  const closeGeneratedTestLinkModal = () => {
+    setIsModalOpen(false)
+    setRowRecord(null)
+  }
+
+  // Function to submit the Generate Test Link Form
+  const submitGeneratedLinkForm = async (values) => {
+    let end_date = endDate + ' 00:00:00'
+    values.end_date = end_date
+    values.email_list = tags.toString()
+    triggerFetchData('generate_test_link/', values)
+      .then((data) => {
+        message.success('Test Link Generated')
+        setIsModalOpen(false)
+        fetchData()
+      })
+      .catch((reason) => {
+        setShowGenerateTestError(reason.message)
+        message.error(reason.message)
+      })
+  }
+
+  // Function to handle the Form failed
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo)
+  }
+
   return (
     <>
       <Layout.Content style={{ height: '100vh', padding: '1rem' }}>
-        <Button type="primary" onClick={showModal}>
+        <Button type="primary" onClick={showGeneratedTestLinkModal}>
           Generate Test Link
         </Button>
         <Table
           columns={list_columns}
           dataSource={apiData ? apiData.data : []}
-          onChange={onChange}
+          onChange={onTableChange}
         />
         <Modal
           title="Generate Test Link"
           open={isModalOpen}
           onOk={form.submit}
-          onCancel={handleCancel}
+          onCancel={closeGeneratedTestLinkModal}
         >
           <Form
             form={form}
@@ -222,9 +240,14 @@ const GenerateLink = (props) => {
               maxWidth: 600,
             }}
             initialValues={{
-              remember: true,
+              // remember: true,
+              ...(testRecord && {
+                name: testRecord.test,
+                test: testRecord.id,
+                end_date: testRecord?.end_date ? moment(testRecord.end_date) : null,
+              }),
             }}
-            onFinish={onFinish}
+            onFinish={submitGeneratedLinkForm}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
@@ -236,7 +259,7 @@ const GenerateLink = (props) => {
                   name={item.dataIndex}
                   rules={[
                     {
-                      required: true,
+                      required: item.dataIndex !== 'email_list',
                       message: `Please input your ${item.title}`,
                     },
                   ]}
@@ -246,14 +269,11 @@ const GenerateLink = (props) => {
                       style={{ width: 100 + '%' }}
                       onChange={onDateChange}
                     />
-                  ) : // <DatePicker onChange={onChange} format={dateFormat} disabledDate={displayDateFormat}/>
-                  item.dataIndex == 'test' ? (
+                  ) : item.dataIndex == 'test' ? (
                     <Select
                       showSearch
-                      placeholder="Select a person"
+                      placeholder="Select a test"
                       optionFilterProp="children"
-                      onChange={onChange}
-                      onSearch={onSearch}
                       filterOption={(input, option) =>
                         (option?.label ?? '')
                           .toLowerCase()
@@ -261,16 +281,20 @@ const GenerateLink = (props) => {
                       }
                       options={filter_test_data}
                     />
+                  ) : item.dataIndex == 'email_list' ? (
+                    <MultiTagInput setTags={setTags} tags={tags}></MultiTagInput>
                   ) : (
                     <Input />
                   )}
                 </Form.Item>
               </>
             ))}
-            {showNotEnoughQuesError && (
-              <p style={{ color: 'red' }}>{showNotEnoughQuesErrorMessage}</p>
-            )}
           </Form>
+          {showGenerateTestError ? (
+            <p style={{ color: 'red' }}>{showGenerateTestError}!</p>
+          ) : (
+            <></>
+          )}
         </Modal>
       </Layout.Content>
 
@@ -280,7 +304,7 @@ const GenerateLink = (props) => {
             title={record.test_details.name}
             open={rowRecord}
             onOk={handleOk}
-            onCancel={handleCancel}
+            onCancel={closeGeneratedTestLinkModal}
           >
             {record.test_details?.question_details?.map((item, index) => (
               <Collapse key={`collapse-index-${index}`} defaultActiveKey={['1']}>
